@@ -18,6 +18,35 @@
       packages = with pkgs; [
         cmake
         ninja
+        pkg-config
+        alsa-lib
+        dbus
+        libGL
+        libayatana-appindicator
+        libdecor
+        libdrm
+        libjack2
+        libpulseaudio
+        libusb1
+        libxkbcommon
+        libgbm
+        libx11
+        libxcb
+        libxscrnsaver
+        libxcursor
+        libxext
+        libxfixes
+        libxi
+        libxrandr
+        libxtst
+        ninja
+        pipewire
+        sndio
+        vulkan-headers
+        vulkan-loader
+        wayland
+        wayland-scanner
+        zenity
       ];
       CMAKE_GENERATOR = "Ninja";
     };
