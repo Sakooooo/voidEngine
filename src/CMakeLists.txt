@@ -1,6 +1,9 @@
 SET(SOURCES
   main.cpp
+  engine.cpp
 )
+
+include_directories(./)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
