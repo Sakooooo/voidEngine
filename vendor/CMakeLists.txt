@@ -25,13 +25,16 @@
 
 find_package(SDL3 CONFIG REQUIRED)
 
+find_package(SDL3_image CONFIG REQUIRED)
+
 find_package(Lua REQUIRED)
 
 add_library(vendor INTERFACE)
 
 target_include_directories(vendor PRIVATE
   ${SDL3_INCLUDE_DIRECTORIES}
+  ${SDL3_image_INCLUDE_DIRECTORIES}
   ${Lua_INCLUDE_DIRS}
 )
 
-target_link_libraries(vendor INTERFACE SDL3::SDL3-static ${Lua_LIBRARIES})
+target_link_libraries(vendor INTERFACE SDL3::SDL3-static ${Lua_LIBRARIES} SDL3_image::SDL3_image-static)

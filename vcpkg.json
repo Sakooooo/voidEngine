@@ -1,6 +1,7 @@
 {
   "dependencies": [
+    "lua",
     "sdl3",
-    "lua"
+    "sdl3-image"
   ]
 }
