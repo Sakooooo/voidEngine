@@ -29,6 +29,8 @@ find_package(SDL3_image CONFIG REQUIRED)
 
 find_package(Lua REQUIRED)
 
+find_package(imgui CONFIG REQUIRED)
+
 add_library(vendor INTERFACE)
 
 target_include_directories(vendor PRIVATE
@@ -37,4 +39,4 @@ target_include_directories(vendor PRIVATE
   ${Lua_INCLUDE_DIRS}
 )
 
-target_link_libraries(vendor INTERFACE SDL3::SDL3-static ${Lua_LIBRARIES} SDL3_image::SDL3_image-static)
+target_link_libraries(vendor INTERFACE SDL3::SDL3-static ${Lua_LIBRARIES} SDL3_image::SDL3_image-static imgui::imgui)

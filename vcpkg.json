@@ -2,6 +2,13 @@
   "dependencies": [
     "lua",
     "sdl3",
-    "sdl3-image"
+    "sdl3-image",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl3-renderer-binding",
+        "sdl3-binding"
+      ]
+    }
   ]
 }
