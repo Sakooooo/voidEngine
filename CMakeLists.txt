@@ -12,5 +12,12 @@ project(voidEngine)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
-add_subdirectory(vendor)
+find_package(SDL3 CONFIG REQUIRED)
+
+find_package(SDL3_image CONFIG REQUIRED)
+
+find_package(Lua REQUIRED)
+
+find_package(imgui CONFIG REQUIRED)
+
 add_subdirectory(src)
