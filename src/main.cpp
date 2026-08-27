@@ -33,22 +33,9 @@ int main()
     if (!engine.initalized)
         return 1;
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    MyTestGui my_test_gui = MyTestGui(engine.gui_manager);
 
-    ImGui::StyleColorsDark();
-
-    float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-    ImGuiStyle &style = ImGui::GetStyle();
-    style.ScaleAllSizes(main_scale);
-    style.FontScaleDpi = main_scale;
-
-    ImGui_ImplSDL3_InitForSDLRenderer(engine.window, engine.renderer);
-    ImGui_ImplSDLRenderer3_Init(engine.renderer);
+    engine.gui_manager->AddPanel(&my_test_gui);
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -91,50 +78,22 @@ int main()
             }
         }
 
-        ImGui_ImplSDLRenderer3_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
+        // if (show_demo_window)
+        //     ImGui::ShowDemoWindow(&show_demo_window);
 
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+        // if (show_another_window)
+        // {
+        //     ImGui::Begin("Another window", &show_another_window);
+        //     ImGui::Text("I am another window");
+        //     if (ImGui::Button("Close me"))
+        //         show_another_window = false;
+        //     ImGui::End();
+        // }
 
-        // imgui closure
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello world!");
-
-            ImGui::Text("I am some text");
-            ImGui::Checkbox("Open demo window", &show_demo_window);
-            ImGui::Checkbox("Open Another window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-            ImGui::ColorEdit3("clear color", (float *)&clear_color);
-
-            if (ImGui::Button("Button"))
-                counter++;
-
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
-
-        if (show_another_window)
-        {
-            ImGui::Begin("Another window", &show_another_window);
-            ImGui::Text("I am another window");
-            if (ImGui::Button("Close me"))
-                show_another_window = false;
-            ImGui::End();
-        }
-
-        ImGui::Render();
-        SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-        SDL_SetRenderDrawColorFloat(engine.renderer, clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-        // SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        engine.gui_manager->RenderPanels();
+        SDL_SetRenderScale(engine.renderer, engine.gui_manager->io->DisplayFramebufferScale.x, engine.gui_manager->io->DisplayFramebufferScale.y);
+        // SDL_SetRenderDrawColorFloat(engine.renderer, clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
         SDL_RenderClear(engine.renderer);
 
         SDL_RenderGeometry(engine.renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
@@ -143,10 +102,6 @@ int main()
 
         SDL_RenderPresent(engine.renderer);
     }
-
-    ImGui_ImplSDLRenderer3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
 
     SDL_Quit();
     return 0;

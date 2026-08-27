@@ -1,6 +1,7 @@
 SET(SOURCES
   main.cpp
   engine.cpp
+  gui.cpp
 )
 
 include_directories(./)
