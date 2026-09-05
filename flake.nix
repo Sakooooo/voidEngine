@@ -16,6 +16,7 @@
   in {
     devShells.${system}.default = pkgs.mkShell.override {stdenv = pkgs.clangStdenv;} {
       packages = with pkgs; [
+        lldb
         cmake
         ninja
         pkg-config

@@ -10,6 +10,7 @@ class GuiManager;
 
 class Gui {
 public:
+  Gui(GuiManager *mgr) : manager(mgr) {};
   GuiManager *manager;
 
   virtual void Render() = 0;
@@ -34,7 +35,7 @@ private:
 
 class MyTestGui : public Gui {
 public:
-  MyTestGui(GuiManager *manager) { manager = manager; };
+  MyTestGui(GuiManager *manager) : Gui(manager) {};
   virtual void Render();
 };
 

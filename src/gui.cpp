@@ -71,7 +71,10 @@ void MyTestGui::Render() {
   ImGui::SameLine();
   ImGui::Text("counter = %d", counter);
 
+  // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+  //             1000.0f / manager->io->Framerate, manager->io->Framerate);
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
               1000.0f / manager->io->Framerate, manager->io->Framerate);
+
   ImGui::End();
 }
