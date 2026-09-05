@@ -19,6 +19,15 @@
         cmake
         ninja
         pkg-config
+        sdl3
+        sdl3-image
+        lua
+        # upstream imgui package is outdated,
+        # TODO bug maintainer to update or do it yourself
+        (imgui.override {
+          IMGUI_BUILD_SDL3_BINDING = true;
+          IMGUI_BUILD_SDL3_RENDERER_BINDING = true;
+        })
         alsa-lib
         dbus
         libGL
