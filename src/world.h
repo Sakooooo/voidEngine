@@ -1,10 +1,16 @@
 #ifndef WORLD_H
 #define WORLD_H
-#include "entity.h"
+#include <cstdint>
 #include <vector>
 
+using Entity = std::uint32_t;
+
 class World {
-  std::vector<Entity> entities;
+public:
+  Entity createEntity() { return nextId++; }
+
+private:
+  Entity nextId = 0;
 };
 
 #endif
