@@ -3,6 +3,7 @@ SET(SOURCES
   engine.cpp
   gui.cpp
   world.cpp
+  entity.cpp
 )
 
 include_directories(./)
