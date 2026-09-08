@@ -38,7 +38,7 @@ int main() {
   auto &world = World::get_instance();
 
   auto entity = world.createEntity();
-  world.add_component<Transform>(entity, 100.0f, 100.0f);
+  Transform pos = world.add_component<Transform>(entity, 100.0f, 100.0f);
 
   bool show_demo_window = true;
   bool show_another_window = false;

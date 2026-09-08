@@ -13,8 +13,8 @@ template <typename ComponentType>
 concept ComponentConcept = std::derived_from<ComponentType, Component>;
 
 struct Transform : public Component {
-  float x;
-  float y;
+  float x{};
+  float y{};
 };
 
 struct Something : public Component {
@@ -25,7 +25,7 @@ template <ComponentConcept ComponentType> class Storage {
 public:
   template <typename... Args>
   ComponentType &add_component(Entity e, Args &&...args) {
-    auto &[it, inserted] =
+    auto [it, inserted] =
         m_storage.emplace(e, ComponentType{{}, std::forward<Args>(args)...});
     return it->second;
   };
