@@ -1,12 +1,18 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 4.0)
+cmake_minimum_required(VERSION 4.0)
+
+# Do it for the vine
+set(CMAKE_CXX_STANDARD 26)
 
 # Game engines are built statically cause that's what it do Yugi!
 
-IF (WIN32)
+if(WIN32)
   set(VCPKG_TARGET_TRIPLET "x64-windows-static")
-ELSE()
+else()
   # Do people seriously use vcpkg on anything other than windows :D
-ENDIF()
+
+  # this shit breaks on nix i don't know why i don't care
+  set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+endif()
 
 project(voidEngine)
 
