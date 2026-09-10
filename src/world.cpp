@@ -6,8 +6,10 @@ void mySystem(SDL_Renderer *r) {
   for (const auto e : world.get_storage<Transform>().get_entities()) {
     auto *transform{world.get_component<Transform>(e)};
 
-    SDL_FRect rect{transform->x, transform->y, 500, 500};
-    SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
-    SDL_RenderFillRect(r, &rect);
+    if (transform) {
+      SDL_FRect rect{transform->x, transform->y, 500, 500};
+      SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+      SDL_RenderFillRect(r, &rect);
+    }
   }
 }

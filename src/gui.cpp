@@ -90,6 +90,8 @@ void EntityUI::Render() {
   World &world{World::get_instance()};
   ImGui::Begin("Component Viewer");
 
+  std::optional<Entity> pending_removal{};
+
   // TODO: This might be better as a list with popup windows?
   if (ImGui::BeginTabBar("entities")) {
 
@@ -110,7 +112,7 @@ void EntityUI::Render() {
         }
 
         if (ImGui::Button("Remove Transform")) {
-          world.get_storage<Transform>().remove_component(e);
+          pending_removal = e;
         }
 
         ImGui::EndTabItem();
@@ -119,6 +121,9 @@ void EntityUI::Render() {
       i++;
     }
     ImGui::EndTabBar();
+
+    if (pending_removal.has_value())
+      world.get_storage<Transform>().remove_component(*pending_removal);
   }
 
   ImGui::End();
