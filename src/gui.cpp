@@ -108,6 +108,10 @@ void EntityUI::Render() {
           ImGui::SliderFloat("y", &transform->y, 0.0f, 1000.0f);
         }
 
+        if (ImGui::Button("Remove Transform")) {
+          world.get_storage<Transform>().remove_component(e);
+        }
+
         ImGui::EndTabItem();
       }
       ImGui::PopID();

@@ -42,6 +42,19 @@ public:
     return m_dense[m_sparse[key]];
   }
 
+  void remove(Entity key) {
+    auto index = m_sparse[key];
+    auto last = m_dense.size() - 1;
+
+    m_dense[index] = std::move(m_dense[last]);
+    m_dense_keys[index] = m_dense_keys[last];
+    m_sparse[m_dense_keys[index]] = index;
+
+    m_dense.pop_back();
+    m_dense_keys.pop_back();
+    m_sparse[key] = INVALID;
+  }
+
   ComponentType *get(Entity key) {
     if (key >= m_sparse.size()) {
       return nullptr;
@@ -78,6 +91,8 @@ public:
 
   ComponentType *get_component(Entity e) { return m_storage.get(e); }
 
+  void remove_component(Entity e) { m_storage.remove(e); };
+
   const auto &get_entities() { return m_storage.get_entities(); }
 
 private:
@@ -101,6 +116,12 @@ public:
   ComponentType &add_component(Entity e, Args &&...args) {
     auto &storage{get_storage<ComponentType>()};
     return storage.add_component(e, std::forward<Args>(args)...);
+  };
+
+  template <ComponentConcept ComponentType, typename... Args>
+  void remove_component(Entity e) {
+    auto &storage{get_storage<ComponentType>()};
+    storage.remove_component(e);
   };
 
   template <ComponentConcept ComponentType>
