@@ -1,6 +1,9 @@
 #include "gui.h"
+#include "world.h"
 #include <algorithm>
+#include <imgui.h>
 #include <stdio.h>
+#include <string>
 
 GuiManager::GuiManager(SDL_Window *window, SDL_Renderer *renderer) {
   printf("Initalizing GuiManager\n");
@@ -46,7 +49,8 @@ void GuiManager::RenderPanels() {
   ImGui::NewFrame();
 
   for (auto *panel : panels) {
-    panel->Render();
+    if (panel->visible)
+      panel->Render();
   }
 
   ImGui::Render();
@@ -68,13 +72,49 @@ void MyTestGui::Render() {
   if (ImGui::Button("Button"))
     counter++;
 
+  if (child)
+    ImGui::Checkbox("Show Entity UI", &child->visible);
+
   ImGui::SameLine();
   ImGui::Text("counter = %d", counter);
 
   // ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
   //             1000.0f / manager->io->Framerate, manager->io->Framerate);
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-              1000.0f / manager->io->Framerate, manager->io->Framerate);
+	      1000.0f / manager->io->Framerate, manager->io->Framerate);
+
+  ImGui::End();
+}
+
+void EntityUI::Render() {
+  World &world{World::get_instance()};
+  ImGui::Begin("Component Viewer");
+
+  if (ImGui::BeginTabBar("entities")) {
+
+    // TODO: Make a way to get this to fetch all components of one entity
+    // TODO: Make a way to get a list of entities?
+    size_t i = 0;
+    for (const auto &[e, transform_component] :
+	 world.get_component_map<Transform>()) {
+
+      std::string label = "Entity " + std::to_string(e);
+      ImGui::PushID(i);
+      if (ImGui::BeginTabItem(label.c_str())) {
+
+	auto transform{world.get_component<Transform>(e)};
+	if (transform.has_value()) {
+	  ImGui::SliderFloat("x", &transform->get().x, 0.0f, 1000.0f);
+	  ImGui::SliderFloat("y", &transform->get().y, 0.0f, 1000.0f);
+	}
+
+	ImGui::EndTabItem();
+      }
+      ImGui::PopID();
+      i++;
+    }
+    ImGui::EndTabBar();
+  }
 
   ImGui::End();
 }

@@ -6,6 +6,7 @@
 #include "SDL3/SDL_rect.h"
 #include "SDL3/SDL_render.h"
 #include "engine.h"
+#include "gui.h"
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
@@ -31,9 +32,15 @@ int main() {
   if (!engine.initalized)
     return 1;
 
+  EntityUI my_entity_gui = EntityUI(engine.gui_manager);
+
   MyTestGui my_test_gui = MyTestGui(engine.gui_manager);
 
+  my_test_gui.child = &my_entity_gui;
+
   engine.gui_manager->AddPanel(&my_test_gui);
+
+  engine.gui_manager->AddPanel(&my_entity_gui);
 
   auto &world = World::get_instance();
 

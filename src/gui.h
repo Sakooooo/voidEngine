@@ -13,6 +13,8 @@ public:
   Gui(GuiManager *mgr) : manager(mgr) {};
   GuiManager *manager;
 
+  bool visible = false;
+
   virtual void Render() = 0;
 };
 
@@ -33,10 +35,17 @@ private:
   std::vector<Gui *> panels;
 };
 
+class EntityUI : public Gui {
+public:
+  EntityUI(GuiManager *manager) : Gui(manager) {};
+  virtual void Render();
+};
+
 class MyTestGui : public Gui {
 public:
-  MyTestGui(GuiManager *manager) : Gui(manager) {};
+  MyTestGui(GuiManager *manager) : Gui(manager) { visible = true; };
   virtual void Render();
+  EntityUI *child;
 };
 
 #endif
