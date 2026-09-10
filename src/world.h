@@ -1,9 +1,11 @@
 #ifndef WORLD_H
 #define WORLD_H
+#include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_render.h>
 #include <concepts>
 #include <cstdint>
 #include <functional>
+#include <limits>
 #include <optional>
 #include <unordered_map>
 #include <vector>
@@ -24,27 +26,62 @@ struct Something : public Component {
   int something;
 };
 
+template <ComponentConcept ComponentType> class SparseSet {
+public:
+  ComponentType &insert(Entity key, const ComponentType &component) {
+    ensure_spare_size(key);
+
+    if (m_sparse[key] == INVALID) {
+      m_sparse[key] = m_dense.size();
+      m_dense_keys.push_back(key);
+      m_dense.push_back(component);
+    } else {
+      m_dense[m_sparse[key]] = component;
+    }
+
+    return m_dense[m_sparse[key]];
+  }
+
+  ComponentType *get(Entity key) {
+    if (key >= m_sparse.size()) {
+      return nullptr;
+    }
+
+    auto index{m_sparse[key]};
+    if (m_sparse[index] == INVALID) {
+      return nullptr;
+    }
+
+    return &m_dense[index];
+  }
+
+  // TODO: make this an ecs view thing instead
+  const auto &get_entities() const { return m_dense_keys; }
+
+private:
+  void ensure_spare_size(Entity key) {
+    if (key >= m_sparse.size())
+      m_sparse.resize(key + 1, INVALID);
+  }
+  static constexpr std::size_t INVALID{std::numeric_limits<std::size_t>::max()};
+  std::vector<std::size_t> m_sparse{};
+  std::vector<std::size_t> m_dense_keys{};
+  std::vector<ComponentType> m_dense{};
+};
+
 template <ComponentConcept ComponentType> class Storage {
 public:
   template <typename... Args>
   ComponentType &add_component(Entity e, Args &&...args) {
-    auto [it, inserted] =
-	m_storage.emplace(e, ComponentType{{}, std::forward<Args>(args)...});
-    return it->second;
+    return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
   };
 
-  std::optional<std::reference_wrapper<ComponentType>> get_component(Entity e) {
-    auto it{m_storage.find(e)};
-    if (it == m_storage.end())
-      return std::nullopt;
+  ComponentType *get_component(Entity e) { return m_storage.get(e); }
 
-    return it->second;
-  }
-
-  auto &get_map() { return m_storage; }
+  const auto &get_entities() { return m_storage.get_entities(); }
 
 private:
-  std::unordered_map<Entity, ComponentType> m_storage{};
+  SparseSet<ComponentType> m_storage{};
 };
 
 class World {
@@ -67,14 +104,10 @@ public:
   };
 
   template <ComponentConcept ComponentType>
-  std::optional<std::reference_wrapper<ComponentType>> get_component(Entity e) {
+  ComponentType *get_component(Entity e) {
     auto &storage{get_storage<ComponentType>()};
     return storage.get_component(e);
   };
-
-  template <ComponentConcept ComponentType> auto &get_component_map() {
-    return get_storage<ComponentType>().get_map();
-  }
 
   Entity createEntity() { return nextId++; };
 
