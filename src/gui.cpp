@@ -90,6 +90,7 @@ void EntityUI::Render() {
   World &world{World::get_instance()};
   ImGui::Begin("Component Viewer");
 
+  // TODO: This might be better as a list with popup windows?
   if (ImGui::BeginTabBar("entities")) {
 
     // TODO: Make a way to get this to fetch all components of one entity
