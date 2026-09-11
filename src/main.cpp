@@ -15,14 +15,17 @@
 #include <cstdio>
 #include <vector>
 
-extern "C" {
+extern "C"
+{
 #include <lua.h>
 }
 
-int main() {
+int main()
+{
   SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
-  if (!SDL_Init(SDL_INIT_VIDEO)) {
+  if (!SDL_Init(SDL_INIT_VIDEO))
+  {
     printf("Failed to initalize SDL Video! %s\n", SDL_GetError());
     return 1;
   }
@@ -34,11 +37,17 @@ int main() {
 
   EntityUI my_entity_gui = EntityUI(engine.gui_manager);
 
-  MyTestGui my_test_gui = MyTestGui(engine.gui_manager);
+  MyDebugUi debug_ui = MyDebugUi(engine.gui_manager);
 
-  my_test_gui.child = &my_entity_gui;
+  debug_ui.entity_debug = &my_entity_gui;
 
-  engine.gui_manager->AddPanel(&my_test_gui);
+  // MyTestGui my_test_gui = MyTestGui(engine.gui_manager);
+
+  // my_test_gui.child = &my_entity_gui;
+
+  // engine.gui_manager->AddPanel(&my_test_gui);
+
+  engine.gui_manager->AddPanel(&debug_ui);
 
   engine.gui_manager->AddPanel(&my_entity_gui);
 
@@ -77,16 +86,23 @@ int main() {
       },
   };
 
-  while (running) {
+  while (running)
+  {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event))
+    {
       ImGui_ImplSDL3_ProcessEvent(&event);
-      if (event.type == SDL_EVENT_QUIT) {
+      if (event.type == SDL_EVENT_QUIT)
+      {
         running = false;
       }
-      if (event.type == SDL_EVENT_KEY_DOWN) {
+      if (event.type == SDL_EVENT_KEY_DOWN)
+      {
         if (event.key.key == SDLK_ESCAPE)
           running = false;
+
+        if (event.key.key == SDLK_F7)
+          debug_ui.visible = !debug_ui.visible;
       }
     }
 

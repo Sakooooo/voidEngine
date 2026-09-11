@@ -1,3 +1,4 @@
+// I gotta rework this later :(
 #ifndef WORLD_H
 #define WORLD_H
 #include <SDL3/SDL_gpu.h>
@@ -16,37 +17,56 @@
 
 using Entity = std::uint32_t;
 
-struct Component {};
+struct Component
+{
+};
 
 template <typename ComponentType>
 concept ComponentConcept = std::derived_from<ComponentType, Component>;
 
-struct Transform : public Component {
+struct Transform : public Component
+{
   float x{};
   float y{};
 };
 
-struct Something : public Component {
+struct Color : public Component
+{
+  int r{};
+  int g{};
+  int b{};
+  int a{};
+};
+
+struct Something : public Component
+{
   int something;
 };
 
-template <ComponentConcept ComponentType> class SparseSet {
+template <ComponentConcept ComponentType>
+class SparseSet
+{
 public:
-  ComponentType &insert(Entity key, const ComponentType &component) {
+  ComponentType &insert(Entity key, const ComponentType &component)
+  {
     ensure_spare_size(key);
 
-    if (m_sparse[key] == INVALID) {
+    if (m_sparse[key] == INVALID)
+    {
       m_sparse[key] = m_dense.size();
       m_dense_keys.push_back(key);
       m_dense.push_back(component);
-    } else {
+    }
+    else
+    {
       m_dense[m_sparse[key]] = component;
     }
 
     return m_dense[m_sparse[key]];
   }
 
-  void remove(Entity key) {
+  void remove(Entity key)
+  {
     auto index = m_sparse[key];
     auto last = m_dense.size() - 1;
 
@@ -59,13 +79,16 @@ public:
     m_sparse[key] = INVALID;
   }
 
-  ComponentType *get(Entity key) {
-    if (key >= m_sparse.size()) {
+  ComponentType *get(Entity key)
+  {
+    if (key >= m_sparse.size())
+    {
       return nullptr;
     }
 
     auto index{m_sparse[key]};
-    if (index == INVALID) {
+    if (index == INVALID)
+    {
       return nullptr;
     }
 
@@ -76,7 +99,8 @@ public:
   const auto &get_entities() const { return m_dense_keys; }
 
 private:
-  void ensure_spare_size(Entity key) {
+  void ensure_spare_size(Entity key)
+  {
     if (key >= m_sparse.size())
       m_sparse.resize(key + 1, INVALID);
   }
@@ -86,20 +110,25 @@ private:
   std::vector<ComponentType> m_dense{};
 };
 
-struct IStorage {
+struct IStorage
+{
   virtual ~IStorage() = default;
   virtual void remove_if_present(Entity) = 0;
 };
 
-template <ComponentConcept ComponentType> class Storage : public IStorage {
+template <ComponentConcept ComponentType>
+class Storage : public IStorage
+{
 public:
-  void remove_if_present(Entity e) override {
+  void remove_if_present(Entity e) override
+  {
     if (m_storage.get(e))
       m_storage.remove(e);
   }
 
   template <typename... Args>
-  ComponentType &add_component(Entity e, Args &&...args) {
+  ComponentType &add_component(Entity e, Args &&...args)
+  {
     return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
   };
 
@@ -113,15 +142,18 @@ private:
   SparseSet<ComponentType> m_storage{};
 };
 
-class World {
+class World
+{
 public:
-  static World &get_instance() {
+  static World &get_instance()
+  {
     static World instance{};
     return instance;
   };
 
   template <ComponentConcept ComponentType>
-  Storage<ComponentType> &get_storage() {
+  Storage<ComponentType> &get_storage()
+  {
     // static Storage<ComponentType> storage{};
     // return storage;
     //
@@ -133,32 +165,37 @@ public:
   };
 
   template <ComponentConcept ComponentType, typename... Args>
-  ComponentType &add_component(Entity e, Args &&...args) {
+  ComponentType &add_component(Entity e, Args &&...args)
+  {
     auto &storage{get_storage<ComponentType>()};
     return storage.add_component(e, std::forward<Args>(args)...);
   };
 
   template <ComponentConcept ComponentType, typename... Args>
-  void remove_component(Entity e) {
+  void remove_component(Entity e)
+  {
     auto &storage{get_storage<ComponentType>()};
     storage.remove_component(e);
   };
 
   template <ComponentConcept ComponentType>
-  ComponentType *get_component(Entity e) {
+  ComponentType *get_component(Entity e)
+  {
     auto &storage{get_storage<ComponentType>()};
     return storage.get_component(e);
   };
 
   auto get_entities() { return m_entities; }
 
-  Entity createEntity() {
+  Entity createEntity()
+  {
     Entity newEntity{nextId++};
     m_entities.push_back(newEntity);
     return newEntity;
   };
 
-  void destroyEntity(Entity e) {
+  void destroyEntity(Entity e)
+  {
     for (auto &[type, storage] : m_storages)
       storage->remove_if_present(e);
     std::erase(m_entities, e);

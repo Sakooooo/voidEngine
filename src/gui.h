@@ -8,7 +8,8 @@
 #include <vector>
 class GuiManager;
 
-class Gui {
+class Gui
+{
 public:
   Gui(GuiManager *mgr) : manager(mgr) {};
   GuiManager *manager;
@@ -18,7 +19,8 @@ public:
   virtual void Render() = 0;
 };
 
-class GuiManager {
+class GuiManager
+{
 public:
   GuiManager(SDL_Window *window, SDL_Renderer *renderer);
   ~GuiManager();
@@ -35,17 +37,27 @@ private:
   std::vector<Gui *> panels;
 };
 
-class EntityUI : public Gui {
+class EntityUI : public Gui
+{
 public:
   EntityUI(GuiManager *manager) : Gui(manager) {};
   virtual void Render();
 };
 
-class MyTestGui : public Gui {
+class MyTestGui : public Gui
+{
 public:
   MyTestGui(GuiManager *manager) : Gui(manager) { visible = true; };
   virtual void Render();
   EntityUI *child;
+};
+
+class MyDebugUi : public Gui
+{
+public:
+  MyDebugUi(GuiManager *manager) : Gui(manager) {};
+  virtual void Render();
+  EntityUI *entity_debug;
 };
 
 #endif
