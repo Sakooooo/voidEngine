@@ -12,20 +12,20 @@
 #include "imgui_impl_sdlrenderer3.h"
 #include "world.h"
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_iostream.h>
+#include <SDL3_image/SDL_image.h>
+#include <cstddef>
 #include <cstdio>
 #include <vector>
 
-extern "C"
-{
+extern "C" {
 #include <lua.h>
 }
 
-int main()
-{
+int main() {
   SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
-  if (!SDL_Init(SDL_INIT_VIDEO))
-  {
+  if (!SDL_Init(SDL_INIT_VIDEO)) {
     printf("Failed to initalize SDL Video! %s\n", SDL_GetError());
     return 1;
   }
@@ -86,18 +86,14 @@ int main()
       },
   };
 
-  while (running)
-  {
+  while (running) {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
+    while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
-      if (event.type == SDL_EVENT_QUIT)
-      {
+      if (event.type == SDL_EVENT_QUIT) {
         running = false;
       }
-      if (event.type == SDL_EVENT_KEY_DOWN)
-      {
+      if (event.type == SDL_EVENT_KEY_DOWN) {
         if (event.key.key == SDLK_ESCAPE)
           running = false;
 
