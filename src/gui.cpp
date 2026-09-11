@@ -98,21 +98,23 @@ void EntityUI::Render() {
     // TODO: Make a way to get this to fetch all components of one entity
     // TODO: Make a way to get a list of entities?
     size_t i = 0;
-    for (const auto e : world.get_storage<Transform>().get_entities()) {
+    for (const auto e : world.get_entities()) {
       auto *transform{world.get_component<Transform>(e)};
 
       std::string label = "Entity " + std::to_string(e);
       ImGui::PushID(i);
       if (ImGui::BeginTabItem(label.c_str())) {
-
-        auto transform{world.get_component<Transform>(e)};
         if (transform) {
           ImGui::SliderFloat("x", &transform->x, 0.0f, 1000.0f);
           ImGui::SliderFloat("y", &transform->y, 0.0f, 1000.0f);
-        }
 
-        if (ImGui::Button("Remove Transform")) {
-          pending_removal = e;
+          if (ImGui::Button("Remove Transform")) {
+            pending_removal = e;
+          }
+        } else {
+          if (ImGui::Button("Add Transform")) {
+            world.add_component<Transform>(e, 100.0f, 100.f);
+          }
         }
 
         ImGui::EndTabItem();

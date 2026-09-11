@@ -132,12 +132,19 @@ public:
     return storage.get_component(e);
   };
 
-  Entity createEntity() { return nextId++; };
+  auto get_entities() { return m_entities; }
+
+  Entity createEntity() {
+    Entity newEntity{nextId++};
+    m_entities.push_back(newEntity);
+    return newEntity;
+  };
 
 private:
   // prevent new world
   World() = default;
   Entity nextId = 0;
+  std::vector<Entity> m_entities{};
 };
 
 void mySystem(SDL_Renderer *r);
