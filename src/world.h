@@ -1,9 +1,11 @@
 #ifndef WORLD_H
 #define WORLD_H
 #include <SDL3/SDL_gpu.h>
+#include <SDL3/SDL_log.h>
 #include <SDL3/SDL_render.h>
 #include <concepts>
 #include <cstdint>
+#include <cstdio>
 #include <functional>
 #include <limits>
 #include <optional>
@@ -61,7 +63,7 @@ public:
     }
 
     auto index{m_sparse[key]};
-    if (m_sparse[index] == INVALID) {
+    if (index == INVALID) {
       return nullptr;
     }
 

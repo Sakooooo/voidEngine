@@ -50,6 +50,9 @@ int main() {
   auto secondEntity = world.createEntity();
   Transform pos2 = world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
 
+  auto thirdEntity = world.createEntity();
+  Transform pos3 = world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
+
   bool show_demo_window = true;
   bool show_another_window = false;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -58,19 +61,19 @@ int main() {
 
   const std::vector<SDL_Vertex> verts = {
       {
-	  SDL_FPoint{400, 150},
-	  SDL_FColor{255, 0, 0, 255},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{400, 150},
+          SDL_FColor{255, 0, 0, 255},
+          SDL_FPoint{0, 0},
       },
       {
-	  SDL_FPoint{200, 450},
-	  SDL_FColor{0, 0, 255, 255},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{200, 450},
+          SDL_FColor{0, 0, 255, 255},
+          SDL_FPoint{0, 0},
       },
       {
-	  SDL_FPoint{600, 450},
-	  SDL_FColor{0, 255, 0, 255},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{600, 450},
+          SDL_FColor{0, 255, 0, 255},
+          SDL_FPoint{0, 0},
       },
   };
 
@@ -79,11 +82,11 @@ int main() {
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
       if (event.type == SDL_EVENT_QUIT) {
-	running = false;
+        running = false;
       }
       if (event.type == SDL_EVENT_KEY_DOWN) {
-	if (event.key.key == SDLK_ESCAPE)
-	  running = false;
+        if (event.key.key == SDLK_ESCAPE)
+          running = false;
       }
     }
 
@@ -101,20 +104,20 @@ int main() {
 
     engine.gui_manager->RenderPanels();
     SDL_SetRenderScale(engine.renderer,
-		       engine.gui_manager->io->DisplayFramebufferScale.x,
-		       engine.gui_manager->io->DisplayFramebufferScale.y);
+                       engine.gui_manager->io->DisplayFramebufferScale.x,
+                       engine.gui_manager->io->DisplayFramebufferScale.y);
     // SDL_SetRenderDrawColorFloat(engine.renderer, clear_color.x,
     // clear_color.y, clear_color.z, clear_color.w);
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
 
     SDL_RenderGeometry(engine.renderer, nullptr, verts.data(), verts.size(),
-		       nullptr, 0);
+                       nullptr, 0);
 
     mySystem(engine.renderer);
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
-					  engine.renderer);
+                                          engine.renderer);
 
     SDL_RenderPresent(engine.renderer);
   }
