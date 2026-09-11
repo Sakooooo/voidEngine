@@ -105,7 +105,7 @@ void EntityUI::Render() {
       ImGui::PushID(i);
       if (ImGui::BeginTabItem(label.c_str())) {
         if (transform) {
-          ImGui::SliderFloat("x", &transform->x, 0.0f, 1000.0f);
+          ImGui::SliderFloat("x", &transform->x, 0.0f, 2000.0f);
           ImGui::SliderFloat("y", &transform->y, 0.0f, 1000.0f);
 
           if (ImGui::Button("Remove Transform")) {
@@ -115,6 +115,14 @@ void EntityUI::Render() {
           if (ImGui::Button("Add Transform")) {
             world.add_component<Transform>(e, 100.0f, 100.f);
           }
+        }
+
+        if (ImGui::Button("Create Entity")) {
+          world.createEntity();
+        }
+
+        if (ImGui::Button("Destroy Entity")) {
+          world.destroyEntity(e);
         }
 
         ImGui::EndTabItem();

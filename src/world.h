@@ -8,7 +8,9 @@
 #include <cstdio>
 #include <functional>
 #include <limits>
+#include <memory>
 #include <optional>
+#include <typeindex>
 #include <unordered_map>
 #include <vector>
 
@@ -84,8 +86,18 @@ private:
   std::vector<ComponentType> m_dense{};
 };
 
-template <ComponentConcept ComponentType> class Storage {
+struct IStorage {
+  virtual ~IStorage() = default;
+  virtual void remove_if_present(Entity) = 0;
+};
+
+template <ComponentConcept ComponentType> class Storage : public IStorage {
 public:
+  void remove_if_present(Entity e) override {
+    if (m_storage.get(e))
+      m_storage.remove(e);
+  }
+
   template <typename... Args>
   ComponentType &add_component(Entity e, Args &&...args) {
     return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
@@ -110,8 +122,14 @@ public:
 
   template <ComponentConcept ComponentType>
   Storage<ComponentType> &get_storage() {
-    static Storage<ComponentType> storage{};
-    return storage;
+    // static Storage<ComponentType> storage{};
+    // return storage;
+    //
+    auto [it, inserted] =
+        m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
+    if (inserted)
+      it->second = std::make_unique<Storage<ComponentType>>();
+    return *static_cast<Storage<ComponentType> *>(it->second.get());
   };
 
   template <ComponentConcept ComponentType, typename... Args>
@@ -140,11 +158,18 @@ public:
     return newEntity;
   };
 
+  void destroyEntity(Entity e) {
+    for (auto &[type, storage] : m_storages)
+      storage->remove_if_present(e);
+    std::erase(m_entities, e);
+  };
+
 private:
   // prevent new world
   World() = default;
   Entity nextId = 0;
   std::vector<Entity> m_entities{};
+  std::unordered_map<std::type_index, std::shared_ptr<IStorage>> m_storages{};
 };
 
 void mySystem(SDL_Renderer *r);

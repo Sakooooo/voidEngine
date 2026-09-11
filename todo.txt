@@ -1,1 +1,0 @@
-make World store a list of entities for debug gui
