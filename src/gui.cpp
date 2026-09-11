@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <imgui.h>
 #include <stdio.h>
+#include <utility>
 #include <string>
 
 GuiManager::GuiManager(SDL_Window *window, SDL_Renderer *renderer)
@@ -95,9 +96,9 @@ void MyTestGui::Render()
 void EntityUI::Render()
 {
   World &world{World::get_instance()};
-  ImGui::Begin("Component Viewer");
+  ImGui::Begin("Entity Viewer");
 
-  std::optional<Entity> pending_removal{};
+  std::optional<std::pair<std::type_index, Entity>> pending_removal{};
 
   // TODO: This might be better as a list with popup windows?
   if (ImGui::BeginTabBar("entities"))
@@ -124,6 +125,7 @@ void EntityUI::Render()
     for (const auto e : world.get_entities())
     {
       auto *transform{world.get_component<Transform>(e)};
+      auto *color{world.get_component<Color>(e)};
 
       std::string label = "Entity " + std::to_string(e);
       ImGui::PushID(i);
@@ -136,7 +138,7 @@ void EntityUI::Render()
 
           if (ImGui::Button("Remove Transform"))
           {
-            pending_removal = e;
+            pending_removal.emplace(std::type_index(typeid(Transform)), e);
           }
         }
         else
@@ -144,6 +146,25 @@ void EntityUI::Render()
           if (ImGui::Button("Add Transform"))
           {
             world.add_component<Transform>(e, 100.0f, 100.f);
+          }
+        }
+
+        if (color)
+        {
+          ImGui::SliderInt("r", &color->r, 0, 255);
+          ImGui::SliderInt("g", &color->g, 0, 255);
+          ImGui::SliderInt("b", &color->b, 0, 255);
+          ImGui::SliderInt("a", &color->a, 0, 255);
+          if (ImGui::Button("Remove Color"))
+          {
+            pending_removal.emplace(std::type_index(typeid(Color)), e);
+          }
+        }
+        else
+        {
+          if (ImGui::Button("Add Color"))
+          {
+            world.add_component<Color>(e, 0, 0, 0, 0);
           }
         }
 
@@ -160,7 +181,14 @@ void EntityUI::Render()
     ImGui::EndTabBar();
 
     if (pending_removal.has_value())
-      world.get_storage<Transform>().remove_component(*pending_removal);
+    {
+      // I'm pretty sure this is really bad
+      if (pending_removal->first == std::type_index(typeid(Transform)))
+        world.get_storage<Transform>().remove_component(pending_removal->second);
+
+      if (pending_removal->first == std::type_index(typeid(Color)))
+        world.get_storage<Color>().remove_component(pending_removal->second);
+    }
   }
 
   ImGui::End();
