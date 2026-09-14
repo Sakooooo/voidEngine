@@ -152,6 +152,7 @@ int main() {
                        nullptr, 0);
 
     mySystem(engine.renderer);
+    funnyRainbowSystem();
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
                                           engine.renderer);

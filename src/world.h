@@ -34,6 +34,10 @@ struct Color : public Component {
   int a{};
 };
 
+struct Rainbow : public Component {
+  float speed{};
+};
+
 struct Something : public Component {
   int something;
 };
@@ -188,5 +192,7 @@ private:
 };
 
 void mySystem(SDL_Renderer *r);
+
+void funnyRainbowSystem();
 
 #endif
