@@ -55,12 +55,37 @@ int main() {
 
   auto entity = world.createEntity();
   Transform pos = world.add_component<Transform>(entity, 200.0f, 400.0f);
+  Color color = world.add_component<Color>(entity, 255, 155, 55, 255);
 
   auto secondEntity = world.createEntity();
   Transform pos2 = world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
+  Color color2 = world.add_component<Color>(secondEntity, 255, 155, 55, 255);
 
   auto thirdEntity = world.createEntity();
   Transform pos3 = world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
+
+  // test view()
+  {
+    auto entityComps = world.view<Transform, Color>(entity);
+    if (auto comps = entityComps) {
+      printf("I got entity with transform and color\n");
+      auto &[pos, color] = *comps;
+      printf("Transform: %f, %f\n", pos.x, pos.y);
+      printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
+    } else {
+      printf("nah\n");
+    }
+
+    auto entity2Comps = world.view<Transform, Color>(secondEntity);
+    if (auto comps = entity2Comps) {
+      printf("I got entity with transform and color\n");
+      auto &[pos, color] = *comps;
+      printf("Transform: %f, %f\n", pos.x, pos.y);
+      printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
+    } else {
+      printf("nah\n");
+    }
+  }
 
   bool show_demo_window = true;
   bool show_another_window = false;
