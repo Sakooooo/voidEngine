@@ -1,52 +1,29 @@
-#include "SDL3/SDL_events.h"
-#include "SDL3/SDL_init.h"
-#include "SDL3/SDL_keycode.h"
-#include "SDL3/SDL_log.h"
-#include "SDL3/SDL_pixels.h"
-#include "SDL3/SDL_rect.h"
-#include "SDL3/SDL_render.h"
 #include "engine.h"
 #include "gui.h"
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_sdlrenderer3.h"
 #include "mind.h"
 #include "world.h"
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_iostream.h>
-#include <SDL3_image/SDL_image.h>
-#include <cstddef>
+#include <imgui.h>
+#include <imgui_impl_sdl3.h>
+#include <imgui_impl_sdlrenderer3.h>
 #include <cstdio>
 #include <vector>
-
-extern "C" {
-#include <lua.h>
-}
 
 int main() {
   SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
-  if (!SDL_Init(SDL_INIT_VIDEO)) {
-    printf("Failed to initalize SDL Video! %s\n", SDL_GetError());
-    return 1;
-  }
-
+  // Engine owns SDL_Init/SDL_Quit, the window, the renderer and the GUI, and
+  // tears them down in the right order when it goes out of scope.
   Engine engine;
 
-  if (!engine.initalized)
+  if (!engine.initialized)
     return 1;
 
-  EntityUI my_entity_gui = EntityUI(engine.gui_manager);
+  EntityUI my_entity_gui{engine.gui_manager.get()};
 
-  MyDebugUi debug_ui = MyDebugUi(engine.gui_manager);
+  MyDebugUi debug_ui{engine.gui_manager.get()};
 
   debug_ui.entity_debug = &my_entity_gui;
-
-  // MyTestGui my_test_gui = MyTestGui(engine.gui_manager);
-
-  // my_test_gui.child = &my_entity_gui;
-
-  // engine.gui_manager->AddPanel(&my_test_gui);
 
   engine.gui_manager->AddPanel(&debug_ui);
 
@@ -55,23 +32,20 @@ int main() {
   auto &world = World::get_instance();
 
   auto entity = world.createEntity();
-  Transform pos = world.add_component<Transform>(entity, 200.0f, 400.0f);
-  Color color = world.add_component<Color>(entity, 55, 155, 55, 255);
-  Mind mind = Mind();
-  mind.controlled = true;
-  Controllable controllable = world.add_component<Controllable>(entity, &mind);
+  world.add_component<Transform>(entity, 200.0f, 400.0f);
+  world.add_component<Color>(entity, 55, 155, 55, 255);
+  world.add_component<Controllable>(entity, Mind{.controlled = true});
 
   auto secondEntity = world.createEntity();
-  Transform pos2 = world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
-  Color color2 = world.add_component<Color>(secondEntity, 255, 155, 55, 255);
+  world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
+  world.add_component<Color>(secondEntity, 255, 155, 55, 255);
 
   auto thirdEntity = world.createEntity();
-  Transform pos3 = world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
+  world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
 
   // test view()
   {
-    auto entityComps = world.view<Transform, Color>(entity);
-    if (auto comps = entityComps) {
+    if (auto comps = world.view<Transform, Color>(entity)) {
       printf("I got entity with transform and color\n");
       auto &[pos, color] = *comps;
       printf("Transform: %f, %f\n", pos.x, pos.y);
@@ -80,8 +54,7 @@ int main() {
       printf("nah\n");
     }
 
-    auto entity2Comps = world.view<Transform, Color>(secondEntity);
-    if (auto comps = entity2Comps) {
+    if (auto comps = world.view<Transform, Color>(secondEntity)) {
       printf("I got entity with transform and color\n");
       auto &[pos, color] = *comps;
       printf("Transform: %f, %f\n", pos.x, pos.y);
@@ -91,29 +64,28 @@ int main() {
     }
   }
 
-  bool show_demo_window = true;
-  bool show_another_window = false;
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
   bool running = true;
 
+  // SDL_FColor channels are floats in 0..1, not 0..255
   const std::vector<SDL_Vertex> verts = {
       {
           SDL_FPoint{400, 150},
-          SDL_FColor{255, 0, 0, 255},
+          SDL_FColor{1.0f, 0.0f, 0.0f, 1.0f},
           SDL_FPoint{0, 0},
       },
       {
           SDL_FPoint{200, 450},
-          SDL_FColor{0, 0, 255, 255},
+          SDL_FColor{0.0f, 0.0f, 1.0f, 1.0f},
           SDL_FPoint{0, 0},
       },
       {
           SDL_FPoint{600, 450},
-          SDL_FColor{0, 255, 0, 255},
+          SDL_FColor{0.0f, 1.0f, 0.0f, 1.0f},
           SDL_FPoint{0, 0},
       },
   };
+
+  const ImGuiIO &io = *engine.gui_manager->io;
 
   while (running) {
     SDL_Event event;
@@ -122,40 +94,28 @@ int main() {
       if (event.type == SDL_EVENT_QUIT) {
         running = false;
       }
-      if (event.type == SDL_EVENT_KEY_DOWN) {
+
+      // When an ImGui widget (e.g. a text field) has keyboard focus, don't
+      // also treat the keys as game input.
+      if (event.type == SDL_EVENT_KEY_DOWN && !io.WantCaptureKeyboard) {
         if (event.key.key == SDLK_ESCAPE)
           running = false;
 
         if (event.key.key == SDLK_F7)
           debug_ui.visible = !debug_ui.visible;
-      }
 
-      mindSystem(event);
+        mindSystem(event);
+      }
     }
 
-    // if (show_demo_window)
-    //     ImGui::ShowDemoWindow(&show_demo_window);
-
-    // if (show_another_window)
-    // {
-    //     ImGui::Begin("Another window", &show_another_window);
-    //     ImGui::Text("I am another window");
-    //     if (ImGui::Button("Close me"))
-    //         show_another_window = false;
-    //     ImGui::End();
-    // }
-
     engine.gui_manager->RenderPanels();
-    SDL_SetRenderScale(engine.renderer,
-                       engine.gui_manager->io->DisplayFramebufferScale.x,
-                       engine.gui_manager->io->DisplayFramebufferScale.y);
-    // SDL_SetRenderDrawColorFloat(engine.renderer, clear_color.x,
-    // clear_color.y, clear_color.z, clear_color.w);
+    SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x,
+                       io.DisplayFramebufferScale.y);
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
 
-    SDL_RenderGeometry(engine.renderer, nullptr, verts.data(), verts.size(),
-                       nullptr, 0);
+    SDL_RenderGeometry(engine.renderer, nullptr, verts.data(),
+                       static_cast<int>(verts.size()), nullptr, 0);
 
     mySystem(engine.renderer);
     funnyRainbowSystem();
@@ -166,6 +126,5 @@ int main() {
     SDL_RenderPresent(engine.renderer);
   }
 
-  SDL_Quit();
   return 0;
 }

@@ -1,37 +1,36 @@
 #include "world.h"
-#include <cmath>
 
 void mySystem(SDL_Renderer *r) {
   auto &world{World::get_instance()};
 
   for (const auto e : world.get_entities()) {
-    // auto *transform{world.get_component<Transform>(e)};
-    // auto *color{world.get_component<Color>(e)};
-    auto entityComps = world.view<Transform, Color>(e);
+    auto comps = world.view<Transform, Color>(e);
+    if (!comps)
+      continue;
 
-    if (auto comps = entityComps) {
-      {
-        auto [transform, color] = *comps;
-        SDL_FRect rect{transform.x, transform.y, 500, 500};
-        SDL_SetRenderDrawColor(r, color.r, color.g, color.b, color.a);
-        SDL_RenderFillRect(r, &rect);
-      }
-    }
+    auto [transform, color] = *comps;
+    SDL_FRect rect{transform.x, transform.y, 500, 500};
+    SDL_SetRenderDrawColor(r, static_cast<Uint8>(color.r),
+                           static_cast<Uint8>(color.g),
+                           static_cast<Uint8>(color.b),
+                           static_cast<Uint8>(color.a));
+    SDL_RenderFillRect(r, &rect);
   }
 }
 
 void funnyRainbowSystem() {
   auto &world{World::get_instance()};
   for (const auto e : world.get_entities()) {
+    auto comps = world.view<Color, Rainbow>(e);
+    if (!comps)
+      continue;
 
-    auto entityComps = world.view<Color, Rainbow>(e);
+    auto [color, rainbow] = *comps;
 
-    if (auto comps = entityComps) {
-      auto [color, rainbow] = *comps;
-
-      color.r = color.r >= 255 ? 0 : color.r + 5;
-      color.g = color.g >= 255 ? 0 : color.g + 5;
-      color.b = color.b >= 255 ? 0 : color.b + 5;
-    }
+    // TODO: scale by frame delta time instead of per-frame stepping
+    const int step = static_cast<int>(5.0f * rainbow.speed);
+    color.r = (color.r + step) % 256;
+    color.g = (color.g + step) % 256;
+    color.b = (color.b + step) % 256;
   }
 }

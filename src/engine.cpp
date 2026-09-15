@@ -1,52 +1,61 @@
 #include "engine.h"
-#include "SDL3/SDL_render.h"
-#include "SDL3/SDL_video.h"
+#include "gui.h"
 #include <SDL3/SDL_error.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_iostream.h>
+#include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
-#include <cstdio>
+#include <cstddef>
 
 Engine::Engine() {
-  // This is probably going to look incredibly ugly!
-  // Whatever! I can always just fix it later :D
+  SDL_Log("Creating engine...");
 
-  printf("Creating engine...\n");
+  if (!SDL_Init(SDL_INIT_VIDEO)) {
+    SDL_Log("Failed to initialize SDL Video! %s", SDL_GetError());
+    return;
+  }
+
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
                                    &window, &renderer)) {
-    printf("Failed to create Window and Renderer! %s\n", SDL_GetError());
-    initalized = false;
-  } else {
-    printf("Created Window and Renderer.\n");
-
-    // set app icon
-    // :O this is cool
-    // TODO: GENERATE THIS WITH CMAKE IT DOESNT WORK ON GCC OR
-    // MSVC!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    static const unsigned char icon[] = {
-#embed "../assets/icon.png"
-    };
-
-    static constexpr std::size_t icon_size = sizeof(icon);
-
-    SDL_IOStream *icon_io = SDL_IOFromConstMem(icon, icon_size);
-    SDL_Surface *icon_surface = IMG_Load_IO(icon_io, true); // closes io for you
-
-    SDL_SetWindowIcon(window, icon_surface);
-    SDL_DestroySurface(icon_surface); // cleanup
-
-    gui_manager = new GuiManager(window, renderer);
-
-    if (!gui_manager->initalized) {
-      printf("Failed to initalize GuiManager.\n");
-      initalized = false;
-    } else {
-      printf("GuiManager is ready.\n");
-      initalized = true;
-    }
+    SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
+    return;
   }
+  SDL_Log("Created Window and Renderer.");
+
+  // set app icon
+  // :O this is cool
+  // TODO: GENERATE THIS WITH CMAKE IT DOESNT WORK ON GCC OR MSVC!
+  static const unsigned char icon[] = {
+#embed "../assets/icon.png"
+  };
+  static constexpr std::size_t icon_size = sizeof(icon);
+
+  SDL_IOStream *icon_io = SDL_IOFromConstMem(icon, icon_size);
+  SDL_Surface *icon_surface = IMG_Load_IO(icon_io, true); // closes io for you
+  if (icon_surface) {
+    SDL_SetWindowIcon(window, icon_surface);
+    SDL_DestroySurface(icon_surface);
+  } else {
+    SDL_Log("Failed to load window icon: %s", SDL_GetError());
+  }
+
+  gui_manager = std::make_unique<GuiManager>(window, renderer);
+  if (!gui_manager->initialized) {
+    SDL_Log("Failed to initialize GuiManager.");
+    return;
+  }
+  SDL_Log("GuiManager is ready.");
+  initialized = true;
 }
 
 Engine::~Engine() {
-  printf("Destroying engine...\n");
-  SDL_DestroyWindow(window);
-  SDL_DestroyRenderer(renderer);
+  SDL_Log("Destroying engine...");
+  // Reverse order of creation: the ImGui backends reference the renderer, the
+  // renderer references the window, and SDL_Quit must come last.
+  gui_manager.reset();
+  if (renderer)
+    SDL_DestroyRenderer(renderer);
+  if (window)
+    SDL_DestroyWindow(window);
+  SDL_Quit();
 }

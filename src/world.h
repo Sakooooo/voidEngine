@@ -1,18 +1,16 @@
 // I gotta rework this later :(
 #ifndef WORLD_H
 #define WORLD_H
-#include <SDL3/SDL_gpu.h>
-#include <SDL3/SDL_log.h>
 #include <SDL3/SDL_render.h>
 #include <concepts>
 #include <cstdint>
-#include <cstdio>
-#include <functional>
 #include <limits>
 #include <memory>
 #include <optional>
+#include <tuple>
 #include <typeindex>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 using Entity = std::uint32_t;
@@ -38,14 +36,10 @@ struct Rainbow : public Component {
   float speed{};
 };
 
-struct Something : public Component {
-  int something;
-};
-
 template <ComponentConcept ComponentType> class SparseSet {
 public:
   ComponentType &insert(Entity key, const ComponentType &component) {
-    ensure_spare_size(key);
+    ensure_sparse_size(key);
 
     if (m_sparse[key] == INVALID) {
       m_sparse[key] = m_dense.size();
@@ -59,6 +53,9 @@ public:
   }
 
   void remove(Entity key) {
+    if (!contains(key))
+      return;
+
     auto index = m_sparse[key];
     auto last = m_dense.size() - 1;
 
@@ -71,30 +68,27 @@ public:
     m_sparse[key] = INVALID;
   }
 
+  bool contains(Entity key) const {
+    return key < m_sparse.size() && m_sparse[key] != INVALID;
+  }
+
   ComponentType *get(Entity key) {
-    if (key >= m_sparse.size()) {
+    if (!contains(key))
       return nullptr;
-    }
-
-    auto index{m_sparse[key]};
-    if (index == INVALID) {
-      return nullptr;
-    }
-
-    return &m_dense[index];
+    return &m_dense[m_sparse[key]];
   }
 
   // TODO: make this an ecs view thing instead
   const auto &get_entities() const { return m_dense_keys; }
 
 private:
-  void ensure_spare_size(Entity key) {
+  void ensure_sparse_size(Entity key) {
     if (key >= m_sparse.size())
       m_sparse.resize(key + 1, INVALID);
   }
   static constexpr std::size_t INVALID{std::numeric_limits<std::size_t>::max()};
   std::vector<std::size_t> m_sparse{};
-  std::vector<std::size_t> m_dense_keys{};
+  std::vector<Entity> m_dense_keys{};
   std::vector<ComponentType> m_dense{};
 };
 
@@ -105,21 +99,18 @@ struct IStorage {
 
 template <ComponentConcept ComponentType> class Storage : public IStorage {
 public:
-  void remove_if_present(Entity e) override {
-    if (m_storage.get(e))
-      m_storage.remove(e);
-  }
+  void remove_if_present(Entity e) override { m_storage.remove(e); }
 
   template <typename... Args>
   ComponentType &add_component(Entity e, Args &&...args) {
     return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
-  };
+  }
 
   ComponentType *get_component(Entity e) { return m_storage.get(e); }
 
-  void remove_component(Entity e) { m_storage.remove(e); };
+  void remove_component(Entity e) { m_storage.remove(e); }
 
-  const auto &get_entities() { return m_storage.get_entities(); }
+  const auto &get_entities() const { return m_storage.get_entities(); }
 
 private:
   SparseSet<ComponentType> m_storage{};
@@ -130,65 +121,67 @@ public:
   static World &get_instance() {
     static World instance{};
     return instance;
-  };
+  }
 
   template <ComponentConcept ComponentType>
   Storage<ComponentType> &get_storage() {
-    // static Storage<ComponentType> storage{};
-    // return storage;
-    //
     auto [it, inserted] =
         m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
     if (inserted)
       it->second = std::make_unique<Storage<ComponentType>>();
     return *static_cast<Storage<ComponentType> *>(it->second.get());
-  };
+  }
 
   template <ComponentConcept ComponentType, typename... Args>
   ComponentType &add_component(Entity e, Args &&...args) {
     auto &storage{get_storage<ComponentType>()};
     return storage.add_component(e, std::forward<Args>(args)...);
-  };
+  }
 
-  template <ComponentConcept ComponentType, typename... Args>
-  void remove_component(Entity e) {
+  template <ComponentConcept ComponentType> void remove_component(Entity e) {
     auto &storage{get_storage<ComponentType>()};
     storage.remove_component(e);
-  };
+  }
 
   template <ComponentConcept ComponentType>
   ComponentType *get_component(Entity e) {
     auto &storage{get_storage<ComponentType>()};
     return storage.get_component(e);
-  };
+  }
 
+  // Returns references to all of the requested components if the entity has
+  // every one of them, otherwise nullopt. The references point into the
+  // component storages, so don't hold on to them across an add_component of
+  // the same type.
   template <ComponentConcept... Components>
   std::optional<std::tuple<Components &...>> view(Entity e) {
-    if (!(get_component<Components>(e) && ...))
+    std::tuple<Components *...> ptrs{get_component<Components>(e)...};
+    if (!std::apply([](auto *...p) { return (p && ...); }, ptrs))
       return std::nullopt;
-    return std::tuple<Components &...>(*get_component<Components>(e)...);
-  };
+    return std::apply(
+        [](auto *...p) { return std::tuple<Components &...>(*p...); }, ptrs);
+  }
 
-  auto get_entities() { return m_entities; }
+  const std::vector<Entity> &get_entities() const { return m_entities; }
 
   Entity createEntity() {
     Entity newEntity{nextId++};
     m_entities.push_back(newEntity);
     return newEntity;
-  };
+  }
 
   void destroyEntity(Entity e) {
     for (auto &[type, storage] : m_storages)
       storage->remove_if_present(e);
     std::erase(m_entities, e);
-  };
+  }
 
 private:
   // prevent new world
   World() = default;
   Entity nextId = 0;
   std::vector<Entity> m_entities{};
-  std::unordered_map<std::type_index, std::shared_ptr<IStorage>> m_storages{};
+  std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages{};
 };
 
 void mySystem(SDL_Renderer *r);

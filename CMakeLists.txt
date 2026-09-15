@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 4.0)
 
 # Do it for the vine
 set(CMAKE_CXX_STANDARD 26)
+# Fail loudly instead of silently falling back to an older standard
+# (which would then break on #embed with a confusing error).
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Game engines are built statically cause that's what it do Yugi!
 
