@@ -3,10 +3,10 @@
 #include "mind.h"
 #include "world.h"
 #include <SDL3/SDL.h>
+#include <cstdio>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-#include <cstdio>
 #include <vector>
 
 int main() {
@@ -87,7 +87,20 @@ int main() {
 
   const ImGuiIO &io = *engine.gui_manager->io;
 
+  Uint64 NOW = SDL_GetPerformanceCounter();
+  Uint64 LAST = 0;
+  double deltaTime = 0;
+
   while (running) {
+    LAST = NOW;
+    NOW = SDL_GetPerformanceCounter();
+
+    // TODO: See if it's preferred to use Seconds or Miliseconds for deltaTime
+    // deltaTime =
+    //     (double)((NOW - LAST) * 1000 /
+    //     (double)SDL_GetPerformanceFrequency());
+    deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency());
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
@@ -118,7 +131,7 @@ int main() {
                        static_cast<int>(verts.size()), nullptr, 0);
 
     mySystem(engine.renderer);
-    funnyRainbowSystem();
+    funnyRainbowSystem(deltaTime);
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
                                           engine.renderer);

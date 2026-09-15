@@ -33,7 +33,8 @@ struct Color : public Component {
 };
 
 struct Rainbow : public Component {
-  float speed{};
+  float speed{1.0f};
+  float hue{0.0f};
 };
 
 template <ComponentConcept ComponentType> class SparseSet {
@@ -186,6 +187,6 @@ private:
 
 void mySystem(SDL_Renderer *r);
 
-void funnyRainbowSystem();
+void funnyRainbowSystem(double dt);
 
 #endif
