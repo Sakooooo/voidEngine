@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "mind.h"
 #include "world.h"
 #include <algorithm>
 #include <imgui.h>
@@ -116,10 +117,12 @@ void EntityUI::Render() {
       auto *transform{world.get_component<Transform>(e)};
       auto *color{world.get_component<Color>(e)};
       auto *rainbow{world.get_component<Rainbow>(e)};
+      auto *controllable{world.get_component<Controllable>(e)};
 
       std::string label = "Entity " + std::to_string(e);
       ImGui::PushID(i);
       if (ImGui::BeginTabItem(label.c_str())) {
+        ImGui::Text("Transform");
         if (transform) {
           ImGui::SliderFloat("x", &transform->x, 0.0f, 2000.0f);
           ImGui::SliderFloat("y", &transform->y, 0.0f, 1000.0f);
@@ -133,6 +136,7 @@ void EntityUI::Render() {
           }
         }
 
+        ImGui::Text("Color");
         if (color) {
           ImGui::SliderInt("r", &color->r, 0, 255);
           ImGui::SliderInt("g", &color->g, 0, 255);
@@ -147,6 +151,7 @@ void EntityUI::Render() {
           }
         }
 
+        ImGui::Text("Rainbow");
         if (rainbow) {
           ImGui::SliderFloat("speed", &rainbow->speed, 0.1, 5);
           if (ImGui::Button("Remove Rainbow")) {
@@ -158,6 +163,28 @@ void EntityUI::Render() {
           }
         }
 
+        ImGui::Text("Controllable");
+        if (controllable) {
+          if (controllable->mind->controlled) {
+            if (ImGui::Button("Stop controlling")) {
+              controllable->mind->controlled = false;
+            }
+          } else {
+            if (ImGui::Button("Start controlling")) {
+              controllable->mind->controlled = true;
+            }
+          }
+
+          if (ImGui::Button("Remove control")) {
+            pending_removal.emplace(std::type_index(typeid(Controllable)), e);
+          }
+        } else {
+          if (ImGui::Button("Add control")) {
+            world.add_component<Controllable>(e, new Mind());
+          }
+        }
+
+        ImGui::Text("Control");
         if (ImGui::Button("Destroy Entity")) {
           world.destroyEntity(e);
         }
@@ -181,6 +208,10 @@ void EntityUI::Render() {
 
       if (pending_removal->first == std::type_index(typeid(Rainbow)))
         world.get_storage<Rainbow>().remove_component(pending_removal->second);
+
+      if (pending_removal->first == std::type_index(typeid(Controllable)))
+        world.get_storage<Controllable>().remove_component(
+            pending_removal->second);
 
       printf("If it's not working it's because you probably forgot to add the "
              "component to gui.cpp\n");

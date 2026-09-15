@@ -10,6 +10,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
+#include "mind.h"
 #include "world.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_iostream.h>
@@ -55,7 +56,10 @@ int main() {
 
   auto entity = world.createEntity();
   Transform pos = world.add_component<Transform>(entity, 200.0f, 400.0f);
-  Color color = world.add_component<Color>(entity, 255, 155, 55, 255);
+  Color color = world.add_component<Color>(entity, 55, 155, 55, 255);
+  Mind mind = Mind();
+  mind.controlled = true;
+  Controllable controllable = world.add_component<Controllable>(entity, &mind);
 
   auto secondEntity = world.createEntity();
   Transform pos2 = world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
@@ -125,6 +129,8 @@ int main() {
         if (event.key.key == SDLK_F7)
           debug_ui.visible = !debug_ui.visible;
       }
+
+      mindSystem(event);
     }
 
     // if (show_demo_window)
