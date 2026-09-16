@@ -79,7 +79,7 @@ public:
     return &m_dense[m_sparse[key]];
   }
 
-  // TODO: make this an ecs view thing instead
+  // This is to get all of the entities.
   const auto &get_entities() const { return m_dense_keys; }
 
 private:
