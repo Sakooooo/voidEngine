@@ -12,7 +12,12 @@ struct Mind {
 
 struct Controllable : public Component {
   Mind mind{};
+  bool forward{false};
+  bool backward{false};
+  bool left{false};
+  bool right{false};
 };
 
-void mindSystem(const SDL_Event &event);
+void mindSystem(const bool *keyboard_state);
+void ControllableSystem();
 #endif
