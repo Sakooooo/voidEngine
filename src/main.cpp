@@ -29,7 +29,7 @@ int main() {
 
   engine.gui_manager->AddPanel(&my_entity_gui);
 
-  auto &world = World::get_instance();
+  auto& world = World::get_instance();
 
   auto entity = world.createEntity();
   world.add_component<Transform>(entity, 200.0f, 400.0f);
@@ -47,7 +47,7 @@ int main() {
   {
     if (auto comps = world.view<Transform, Color>(entity)) {
       printf("I got entity with transform and color\n");
-      auto &[pos, color] = *comps;
+      auto& [pos, color] = *comps;
       printf("Transform: %f, %f\n", pos.x, pos.y);
       printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
     } else {
@@ -56,7 +56,7 @@ int main() {
 
     if (auto comps = world.view<Transform, Color>(secondEntity)) {
       printf("I got entity with transform and color\n");
-      auto &[pos, color] = *comps;
+      auto& [pos, color] = *comps;
       printf("Transform: %f, %f\n", pos.x, pos.y);
       printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
     } else {
@@ -69,23 +69,23 @@ int main() {
   // SDL_FColor channels are floats in 0..1, not 0..255
   const std::vector<SDL_Vertex> verts = {
       {
-	  SDL_FPoint{400, 150},
-	  SDL_FColor{1.0f, 0.0f, 0.0f, 1.0f},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{400, 150},
+          SDL_FColor{1.0f, 0.0f, 0.0f, 1.0f},
+          SDL_FPoint{0, 0},
       },
       {
-	  SDL_FPoint{200, 450},
-	  SDL_FColor{0.0f, 0.0f, 1.0f, 1.0f},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{200, 450},
+          SDL_FColor{0.0f, 0.0f, 1.0f, 1.0f},
+          SDL_FPoint{0, 0},
       },
       {
-	  SDL_FPoint{600, 450},
-	  SDL_FColor{0.0f, 1.0f, 0.0f, 1.0f},
-	  SDL_FPoint{0, 0},
+          SDL_FPoint{600, 450},
+          SDL_FColor{0.0f, 1.0f, 0.0f, 1.0f},
+          SDL_FPoint{0, 0},
       },
   };
 
-  const ImGuiIO &io = *engine.gui_manager->io;
+  const ImGuiIO& io = *engine.gui_manager->io;
 
   Uint64 NOW = SDL_GetPerformanceCounter();
   Uint64 LAST = 0;
@@ -105,37 +105,37 @@ int main() {
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
       if (event.type == SDL_EVENT_QUIT) {
-	running = false;
+        running = false;
       }
 
       // When an ImGui widget (e.g. a text field) has keyboard focus, don't
       // also treat the keys as game input.
       if (event.type == SDL_EVENT_KEY_DOWN && !io.WantCaptureKeyboard) {
-	if (event.key.key == SDLK_ESCAPE)
-	  running = false;
+        if (event.key.key == SDLK_ESCAPE)
+          running = false;
 
-	if (event.key.key == SDLK_F7)
-	  debug_ui.visible = !debug_ui.visible;
+        if (event.key.key == SDLK_F7)
+          debug_ui.visible = !debug_ui.visible;
 
-	mindSystem(engine.keyboard_state);
-	ControllableSystem();
+        mindSystem(engine.keyboard_state);
+        ControllableSystem();
       }
     }
 
     engine.gui_manager->RenderPanels();
     SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x,
-		       io.DisplayFramebufferScale.y);
+                       io.DisplayFramebufferScale.y);
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
 
     SDL_RenderGeometry(engine.renderer, nullptr, verts.data(),
-		       static_cast<int>(verts.size()), nullptr, 0);
+                       static_cast<int>(verts.size()), nullptr, 0);
 
     mySystem(engine.renderer);
     funnyRainbowSystem(deltaTime);
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
-					  engine.renderer);
+                                          engine.renderer);
 
     SDL_RenderPresent(engine.renderer);
   }

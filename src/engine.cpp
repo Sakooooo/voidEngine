@@ -30,8 +30,8 @@ Engine::Engine() {
   };
   static constexpr std::size_t icon_size = sizeof(icon);
 
-  SDL_IOStream *icon_io = SDL_IOFromConstMem(icon, icon_size);
-  SDL_Surface *icon_surface = IMG_Load_IO(icon_io, true); // closes io for you
+  SDL_IOStream* icon_io = SDL_IOFromConstMem(icon, icon_size);
+  SDL_Surface* icon_surface = IMG_Load_IO(icon_io, true); // closes io for you
   if (icon_surface) {
     SDL_SetWindowIcon(window, icon_surface);
     SDL_DestroySurface(icon_surface);

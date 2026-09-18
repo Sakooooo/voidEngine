@@ -37,9 +37,10 @@ struct Rainbow : public Component {
   float hue{0.0f};
 };
 
-template <ComponentConcept ComponentType> class SparseSet {
+template <ComponentConcept ComponentType>
+class SparseSet {
 public:
-  ComponentType &insert(Entity key, const ComponentType &component) {
+  ComponentType& insert(Entity key, const ComponentType& component) {
     ensure_sparse_size(key);
 
     if (m_sparse[key] == INVALID) {
@@ -73,14 +74,14 @@ public:
     return key < m_sparse.size() && m_sparse[key] != INVALID;
   }
 
-  ComponentType *get(Entity key) {
+  ComponentType* get(Entity key) {
     if (!contains(key))
       return nullptr;
     return &m_dense[m_sparse[key]];
   }
 
   // This is to get all of the entities.
-  const auto &get_entities() const { return m_dense_keys; }
+  const auto& get_entities() const { return m_dense_keys; }
 
 private:
   void ensure_sparse_size(Entity key) {
@@ -98,20 +99,21 @@ struct IStorage {
   virtual void remove_if_present(Entity) = 0;
 };
 
-template <ComponentConcept ComponentType> class Storage : public IStorage {
+template <ComponentConcept ComponentType>
+class Storage : public IStorage {
 public:
   void remove_if_present(Entity e) override { m_storage.remove(e); }
 
   template <typename... Args>
-  ComponentType &add_component(Entity e, Args &&...args) {
+  ComponentType& add_component(Entity e, Args&&... args) {
     return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
   }
 
-  ComponentType *get_component(Entity e) { return m_storage.get(e); }
+  ComponentType* get_component(Entity e) { return m_storage.get(e); }
 
   void remove_component(Entity e) { m_storage.remove(e); }
 
-  const auto &get_entities() const { return m_storage.get_entities(); }
+  const auto& get_entities() const { return m_storage.get_entities(); }
 
 private:
   SparseSet<ComponentType> m_storage{};
@@ -119,34 +121,35 @@ private:
 
 class World {
 public:
-  static World &get_instance() {
+  static World& get_instance() {
     static World instance{};
     return instance;
   }
 
   template <ComponentConcept ComponentType>
-  Storage<ComponentType> &get_storage() {
+  Storage<ComponentType>& get_storage() {
     auto [it, inserted] =
         m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
     if (inserted)
       it->second = std::make_unique<Storage<ComponentType>>();
-    return *static_cast<Storage<ComponentType> *>(it->second.get());
+    return *static_cast<Storage<ComponentType>*>(it->second.get());
   }
 
   template <ComponentConcept ComponentType, typename... Args>
-  ComponentType &add_component(Entity e, Args &&...args) {
-    auto &storage{get_storage<ComponentType>()};
+  ComponentType& add_component(Entity e, Args&&... args) {
+    auto& storage{get_storage<ComponentType>()};
     return storage.add_component(e, std::forward<Args>(args)...);
   }
 
-  template <ComponentConcept ComponentType> void remove_component(Entity e) {
-    auto &storage{get_storage<ComponentType>()};
+  template <ComponentConcept ComponentType>
+  void remove_component(Entity e) {
+    auto& storage{get_storage<ComponentType>()};
     storage.remove_component(e);
   }
 
   template <ComponentConcept ComponentType>
-  ComponentType *get_component(Entity e) {
-    auto &storage{get_storage<ComponentType>()};
+  ComponentType* get_component(Entity e) {
+    auto& storage{get_storage<ComponentType>()};
     return storage.get_component(e);
   }
 
@@ -155,15 +158,15 @@ public:
   // component storages, so don't hold on to them across an add_component of
   // the same type.
   template <ComponentConcept... Components>
-  std::optional<std::tuple<Components &...>> view(Entity e) {
-    std::tuple<Components *...> ptrs{get_component<Components>(e)...};
-    if (!std::apply([](auto *...p) { return (p && ...); }, ptrs))
+  std::optional<std::tuple<Components&...>> view(Entity e) {
+    std::tuple<Components*...> ptrs{get_component<Components>(e)...};
+    if (!std::apply([](auto*... p) { return (p && ...); }, ptrs))
       return std::nullopt;
     return std::apply(
-        [](auto *...p) { return std::tuple<Components &...>(*p...); }, ptrs);
+        [](auto*... p) { return std::tuple<Components&...>(*p...); }, ptrs);
   }
 
-  const std::vector<Entity> &get_entities() const { return m_entities; }
+  const std::vector<Entity>& get_entities() const { return m_entities; }
 
   Entity createEntity() {
     Entity newEntity{nextId++};
@@ -172,7 +175,7 @@ public:
   }
 
   void destroyEntity(Entity e) {
-    for (auto &[type, storage] : m_storages)
+    for (auto& [type, storage] : m_storages)
       storage->remove_if_present(e);
     std::erase(m_entities, e);
   }
@@ -185,7 +188,7 @@ private:
   std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages{};
 };
 
-void mySystem(SDL_Renderer *r);
+void mySystem(SDL_Renderer* r);
 
 void funnyRainbowSystem(double dt);
 

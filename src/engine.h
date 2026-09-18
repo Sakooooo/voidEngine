@@ -14,9 +14,9 @@ class GuiManager;
 class Engine {
 public:
   // I wonder if this could be an array later
-  SDL_Window *window{nullptr};
-  SDL_Renderer *renderer{nullptr};
-  const bool *keyboard_state{SDL_GetKeyboardState(nullptr)};
+  SDL_Window* window{nullptr};
+  SDL_Renderer* renderer{nullptr};
+  const bool* keyboard_state{SDL_GetKeyboardState(nullptr)};
 
   std::unique_ptr<GuiManager> gui_manager;
 
@@ -25,10 +25,10 @@ public:
   Engine();
   ~Engine();
 
-  Engine(const Engine &) = delete;
-  Engine &operator=(const Engine &) = delete;
-  Engine(Engine &&) = delete;
-  Engine &operator=(Engine &&) = delete;
+  Engine(const Engine&) = delete;
+  Engine& operator=(const Engine&) = delete;
+  Engine(Engine&&) = delete;
+  Engine& operator=(Engine&&) = delete;
 };
 
 #endif

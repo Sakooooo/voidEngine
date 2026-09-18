@@ -2,8 +2,8 @@
 #include "mind.h"
 #include <SDL3/SDL_keyboard.h>
 
-void mindSystem(const bool *keyboard_state) {
-  auto &world{World::get_instance()};
+void mindSystem(const bool* keyboard_state) {
+  auto& world{World::get_instance()};
 
   for (const auto e : world.get_entities()) {
     auto query{world.view<Controllable, Transform>(e)};
@@ -22,7 +22,7 @@ void mindSystem(const bool *keyboard_state) {
 }
 
 void ControllableSystem() {
-  auto &world{World::get_instance()};
+  auto& world{World::get_instance()};
 
   for (const auto e : world.get_entities()) {
     auto query{world.view<Controllable, Transform>(e)};

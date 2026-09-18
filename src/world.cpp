@@ -2,8 +2,8 @@
 #include "imgui.h"
 #include <cmath>
 
-void mySystem(SDL_Renderer *r) {
-  auto &world{World::get_instance()};
+void mySystem(SDL_Renderer* r) {
+  auto& world{World::get_instance()};
 
   for (const auto e : world.get_entities()) {
     auto comps = world.view<Transform, Color>(e);
@@ -20,7 +20,7 @@ void mySystem(SDL_Renderer *r) {
 }
 
 void funnyRainbowSystem(double dt) {
-  auto &world{World::get_instance()};
+  auto& world{World::get_instance()};
   for (const auto e : world.get_entities()) {
     auto comps = world.view<Color, Rainbow>(e);
     if (!comps)

@@ -18,6 +18,6 @@ struct Controllable : public Component {
   bool right{false};
 };
 
-void mindSystem(const bool *keyboard_state);
+void mindSystem(const bool* keyboard_state);
 void ControllableSystem();
 #endif
