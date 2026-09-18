@@ -106,7 +106,7 @@ public:
 
   template <typename... Args>
   ComponentType& add_component(Entity e, Args&&... args) {
-    return m_storage.insert(e, ComponentType{std::forward<Args>(args)...});
+    return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
   }
 
   ComponentType* get_component(Entity e) { return m_storage.get(e); }
