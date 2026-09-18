@@ -1,6 +1,7 @@
 // I gotta rework this later :(
 #ifndef WORLD_H
 #define WORLD_H
+#include "engine.h"
 #include <SDL3/SDL_render.h>
 #include <concepts>
 #include <cstdint>
@@ -19,6 +20,10 @@ struct Component {};
 
 template <typename ComponentType>
 concept ComponentConcept = std::derived_from<ComponentType, Component>;
+
+// to do this, just define void onLoad(Entity e)
+template <typename ComponentType>
+concept HasOnLoad = requires(ComponentType& component, Engine* engine, Entity e) { component.onLoad(engine, e); }; // not sure if this is a bad idea
 
 struct Transform : public Component {
   float x{};
@@ -126,6 +131,12 @@ public:
     return instance;
   }
 
+  void set_engine(Engine& engine) { m_engine = &engine; }
+
+  Engine& engine() {
+    return *m_engine;
+  }
+
   template <ComponentConcept ComponentType>
   Storage<ComponentType>& get_storage() {
     auto [it, inserted] =
@@ -138,7 +149,10 @@ public:
   template <ComponentConcept ComponentType, typename... Args>
   ComponentType& add_component(Entity e, Args&&... args) {
     auto& storage{get_storage<ComponentType>()};
-    return storage.add_component(e, std::forward<Args>(args)...);
+    auto& component = storage.add_component(e, std::forward<Args>(args)...);
+    if constexpr (HasOnLoad<ComponentType>)
+      component.onLoad(m_engine, e);
+    return component;
   }
 
   template <ComponentConcept ComponentType>
@@ -186,6 +200,7 @@ private:
   Entity nextId = 0;
   std::vector<Entity> m_entities{};
   std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages{};
+  Engine* m_engine{nullptr};
 };
 
 void mySystem(SDL_Renderer* r);

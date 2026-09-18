@@ -2,6 +2,7 @@
 #include "gui.h"
 #include "mind.h"
 #include "world.h"
+#include "script.h"
 #include <SDL3/SDL.h>
 #include <cstdio>
 #include <imgui.h>
@@ -31,6 +32,8 @@ int main() {
 
   auto& world = World::get_instance();
 
+  world.set_engine(engine);
+
   auto entity = world.createEntity();
   world.add_component<Transform>(entity, 200.0f, 400.0f);
   world.add_component<Color>(entity, 55, 155, 55, 255);
@@ -39,6 +42,7 @@ int main() {
   auto secondEntity = world.createEntity();
   world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
   world.add_component<Color>(secondEntity, 255, 155, 55, 255);
+  world.add_component<Script>(secondEntity, "test");
 
   auto thirdEntity = world.createEntity();
   world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
@@ -69,19 +73,19 @@ int main() {
   // SDL_FColor channels are floats in 0..1, not 0..255
   const std::vector<SDL_Vertex> verts = {
       {
-          SDL_FPoint{400, 150},
-          SDL_FColor{1.0f, 0.0f, 0.0f, 1.0f},
-          SDL_FPoint{0, 0},
+	  SDL_FPoint{400, 150},
+	  SDL_FColor{1.0f, 0.0f, 0.0f, 1.0f},
+	  SDL_FPoint{0, 0},
       },
       {
-          SDL_FPoint{200, 450},
-          SDL_FColor{0.0f, 0.0f, 1.0f, 1.0f},
-          SDL_FPoint{0, 0},
+	  SDL_FPoint{200, 450},
+	  SDL_FColor{0.0f, 0.0f, 1.0f, 1.0f},
+	  SDL_FPoint{0, 0},
       },
       {
-          SDL_FPoint{600, 450},
-          SDL_FColor{0.0f, 1.0f, 0.0f, 1.0f},
-          SDL_FPoint{0, 0},
+	  SDL_FPoint{600, 450},
+	  SDL_FColor{0.0f, 1.0f, 0.0f, 1.0f},
+	  SDL_FPoint{0, 0},
       },
   };
 
@@ -105,37 +109,37 @@ int main() {
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL3_ProcessEvent(&event);
       if (event.type == SDL_EVENT_QUIT) {
-        running = false;
+	running = false;
       }
 
       // When an ImGui widget (e.g. a text field) has keyboard focus, don't
       // also treat the keys as game input.
       if (event.type == SDL_EVENT_KEY_DOWN && !io.WantCaptureKeyboard) {
-        if (event.key.key == SDLK_ESCAPE)
-          running = false;
+	if (event.key.key == SDLK_ESCAPE)
+	  running = false;
 
-        if (event.key.key == SDLK_F7)
-          debug_ui.visible = !debug_ui.visible;
+	if (event.key.key == SDLK_F7)
+	  debug_ui.visible = !debug_ui.visible;
 
-        mindSystem(engine.keyboard_state);
-        ControllableSystem();
+	mindSystem(engine.keyboard_state);
+	ControllableSystem();
       }
     }
 
     engine.gui_manager->RenderPanels();
     SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x,
-                       io.DisplayFramebufferScale.y);
+		       io.DisplayFramebufferScale.y);
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
 
     SDL_RenderGeometry(engine.renderer, nullptr, verts.data(),
-                       static_cast<int>(verts.size()), nullptr, 0);
+		       static_cast<int>(verts.size()), nullptr, 0);
 
     mySystem(engine.renderer);
     funnyRainbowSystem(deltaTime);
 
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(),
-                                          engine.renderer);
+					  engine.renderer);
 
     SDL_RenderPresent(engine.renderer);
   }
