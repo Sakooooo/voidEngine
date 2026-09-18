@@ -4,6 +4,7 @@ set(SOURCES
   gui.cpp
   world.cpp
   mind.cpp
+  script.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

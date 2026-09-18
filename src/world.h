@@ -106,7 +106,7 @@ public:
 
   template <typename... Args>
   ComponentType& add_component(Entity e, Args&&... args) {
-    return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
+    return m_storage.insert(e, ComponentType{std::forward<Args>(args)...});
   }
 
   ComponentType* get_component(Entity e) { return m_storage.get(e); }
@@ -129,7 +129,7 @@ public:
   template <ComponentConcept ComponentType>
   Storage<ComponentType>& get_storage() {
     auto [it, inserted] =
-        m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
+	m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
     if (inserted)
       it->second = std::make_unique<Storage<ComponentType>>();
     return *static_cast<Storage<ComponentType>*>(it->second.get());
@@ -163,7 +163,7 @@ public:
     if (!std::apply([](auto*... p) { return (p && ...); }, ptrs))
       return std::nullopt;
     return std::apply(
-        [](auto*... p) { return std::tuple<Components&...>(*p...); }, ptrs);
+	[](auto*... p) { return std::tuple<Components&...>(*p...); }, ptrs);
   }
 
   const std::vector<Entity>& get_entities() const { return m_entities; }

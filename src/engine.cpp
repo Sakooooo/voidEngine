@@ -6,6 +6,8 @@
 #include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstddef>
+#include <lauxlib.h>
+#include <lualib.h>
 
 Engine::Engine() {
   SDL_Log("Creating engine...");
@@ -16,7 +18,7 @@ Engine::Engine() {
   }
 
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
-                                   &window, &renderer)) {
+				   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
@@ -45,13 +47,25 @@ Engine::Engine() {
     return;
   }
   SDL_Log("GuiManager is ready.");
+
+  SDL_Log("Prepare lua");
+
+  lua = luaL_newstate();
+
+  if (!lua) {
+    SDL_Log("lua failed to load");
+    return;
+  }
+
+  luaL_openlibs(lua);
+
   initialized = true;
 }
 
 Engine::~Engine() {
   SDL_Log("Destroying engine...");
-  // Reverse order of creation: the ImGui backends reference the renderer, the
-  // renderer references the window, and SDL_Quit must come last.
+  if (lua)
+    lua_close(lua);
   gui_manager.reset();
   if (renderer)
     SDL_DestroyRenderer(renderer);
