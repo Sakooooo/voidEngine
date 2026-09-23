@@ -51,6 +51,6 @@ struct SharedBool : public Component {
   bool value;
 };
 
-void scriptTickSystem(Engine* engine);
+void scriptTickSystem(Engine* engine, double dt);
 
 #endif

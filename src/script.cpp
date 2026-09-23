@@ -2,7 +2,7 @@
 #include <lauxlib.h>
 #include <lua.h>
 
-void scriptTickSystem(Engine* engine) {
+void scriptTickSystem(Engine* engine, double dt) {
   auto& world{World::get_instance()};
 
   for (const auto e : world.get_entities()) {
@@ -20,7 +20,9 @@ void scriptTickSystem(Engine* engine) {
 
     lua_rawgeti(engine->lua, LUA_REGISTRYINDEX, script.tickRef);
 
-    int result = lua_pcall(engine->lua, 0, 0, 0);
+    lua_pushnumber(engine->lua, dt);
+
+    int result = lua_pcall(engine->lua, 1, 0, 0);
 
     if (result == LUA_ERRRUN) {
       const char* err = lua_tostring(engine->lua, -1);
