@@ -12,6 +12,8 @@
 struct Script : public Component {
   // TODO: We're going to need something like res:// to make this a lot easier
   const char* path;
+  int tickRef{};
+  bool initalized{false};
 
   void onLoad(Engine* engine, Entity e) {
     luaL_dostring(engine->lua, "print('test')");
@@ -34,30 +36,21 @@ struct Script : public Component {
       return;
     }
 
-    int result = lua_pcall(engine->lua, 0, 0, 0);
-
-    if (result == LUA_ERRRUN) {
-      const char* err = lua_tostring(engine->lua, -1);
-      SDL_Log("Lua error: %s", err);
-      lua_pop(engine->lua, -1);
-      return;
-    } else if (result == LUA_ERRMEM) {
-      SDL_Log("LUA_ERRMEM");
-      return;
-    } else if (result == LUA_ERRERR) {
-      SDL_Log("LUA_ERRERR");
-      return;
-    } else if (result == LUA_ERRGCMM) {
-      SDL_Log("LUA_ERRGCMM");
-      return;
+    tickRef = luaL_ref(engine->lua, LUA_REGISTRYINDEX);
+    if (tickRef == LUA_REFNIL) {
+      SDL_Log("luaL_ref returned LUA_REFNIL!");
+      SDL_Log("There is no tick() for this script!");
     }
 
     SDL_Log("OnLoad for Script ran successfully.");
+    initalized = true;
   }
 };
 
 struct SharedBool : public Component {
   bool value;
 };
+
+void scriptTickSystem(Engine* engine);
 
 #endif

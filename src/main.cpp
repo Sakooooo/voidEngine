@@ -126,6 +126,8 @@ int main() {
       }
     }
 
+    scriptTickSystem(&engine);
+
     engine.gui_manager->RenderPanels();
     SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x,
 		       io.DisplayFramebufferScale.y);
