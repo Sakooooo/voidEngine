@@ -6,6 +6,7 @@
 #include <SDL3/SDL_log.h>
 #include <filesystem>
 #include <lauxlib.h>
+#include <lua.h>
 #include <lua.hpp>
 
 struct Script : public Component {
@@ -24,8 +25,42 @@ struct Script : public Component {
       return;
     }
 
+    lua_newtable(engine->lua);
+    lua_setglobal(engine->lua, "void");
+
     luaL_dofile(engine->lua, path);
-    SDL_Log("OnLoad for Script was called.");
+
+    lua_getglobal(engine->lua, "void");
+    if (!lua_istable(engine->lua, -1)) {
+      SDL_Log("oops");
+      return;
+    }
+
+    lua_getfield(engine->lua, -1, "tick");
+    if (!lua_isfunction(engine->lua, -1)) {
+      SDL_Log("bro what");
+      return;
+    }
+
+    int result = lua_pcall(engine->lua, 0, 0, 0);
+
+    if (result == LUA_ERRRUN) {
+      const char* err = lua_tostring(engine->lua, -1);
+      SDL_Log("Lua error: %s", err);
+      lua_pop(engine->lua, -1);
+      return;
+    } else if (result == LUA_ERRMEM) {
+      SDL_Log("LUA_ERRMEM");
+      return;
+    } else if (result == LUA_ERRERR) {
+      SDL_Log("LUA_ERRERR");
+      return;
+    } else if (result == LUA_ERRGCMM) {
+      SDL_Log("LUA_ERRGCMM");
+      return;
+    }
+
+    SDL_Log("OnLoad for Script ran successfully.");
   }
 };
 
