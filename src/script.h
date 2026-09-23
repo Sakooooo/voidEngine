@@ -33,6 +33,7 @@ struct Script : public Component {
 
     if (!lua_isfunction(engine->lua, -1)) {
       SDL_Log("Couldn't find function for tick() or it's not even a function!");
+      lua_pop(engine->lua, 1);
       return;
     }
 
