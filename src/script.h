@@ -25,20 +25,12 @@ struct Script : public Component {
       return;
     }
 
-    lua_newtable(engine->lua);
-    lua_setglobal(engine->lua, "void");
-
     luaL_dofile(engine->lua, path);
 
-    lua_getglobal(engine->lua, "void");
-    if (!lua_istable(engine->lua, -1)) {
-      SDL_Log("oops");
-      return;
-    }
+    lua_getglobal(engine->lua, "tick");
 
-    lua_getfield(engine->lua, -1, "tick");
     if (!lua_isfunction(engine->lua, -1)) {
-      SDL_Log("bro what");
+      SDL_Log("Couldn't find function for tick() or it's not even a function!");
       return;
     }
 
