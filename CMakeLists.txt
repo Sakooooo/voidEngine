@@ -19,9 +19,6 @@ endif()
 
 project(voidEngine)
 
-# Copy assets/scripts contents to scripts folder next to the binary
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/scripts/ DESTINATION ${CMAKE_BINARY_DIR}/scripts)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
     set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
