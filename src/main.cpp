@@ -99,10 +99,6 @@ int main() {
     LAST = NOW;
     NOW = SDL_GetPerformanceCounter();
 
-    // TODO: See if it's preferred to use Seconds or Miliseconds for deltaTime
-    // deltaTime =
-    //     (double)((NOW - LAST) * 1000 /
-    //     (double)SDL_GetPerformanceFrequency());
     deltaTime = (double)((NOW - LAST) / (double)SDL_GetPerformanceFrequency());
 
     SDL_Event event;
@@ -126,7 +122,7 @@ int main() {
       }
     }
 
-    scriptTickSystem(&engine);
+    scriptTickSystem(&engine, deltaTime);
 
     engine.gui_manager->RenderPanels();
     SDL_SetRenderScale(engine.renderer, io.DisplayFramebufferScale.x,
