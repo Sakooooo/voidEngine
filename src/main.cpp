@@ -1,8 +1,8 @@
 #include "engine.h"
 #include "gui.h"
 #include "mind.h"
-#include "world.h"
 #include "script.h"
+#include "world.h"
 #include <SDL3/SDL.h>
 #include <cstdio>
 #include <imgui.h>
@@ -42,7 +42,7 @@ int main() {
   auto secondEntity = world.createEntity();
   world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
   world.add_component<Color>(secondEntity, 255, 155, 55, 255);
-  world.add_component<Script>(secondEntity, "test");
+  world.add_component<Script>(secondEntity, "./scripts/test.lua");
 
   auto thirdEntity = world.createEntity();
   world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
