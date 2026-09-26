@@ -1,4 +1,1 @@
 lua scripting
-| need to make onload function for component() in order to load things
-  | -> this breaks the entire thing because templating magic
-    | -> \_(:<)_/
