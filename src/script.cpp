@@ -27,21 +27,21 @@ void scriptTickSystem(Engine* engine, double dt) {
     if (result == LUA_ERRRUN) {
       const char* err = lua_tostring(engine->lua, -1);
       SDL_Log("Lua error: %s", err);
-      lua_pop(engine->lua, -1);
-      return;
+      lua_pop(engine->lua, 1);
+      continue;
     } else if (result == LUA_ERRMEM) {
       SDL_Log("LUA_ERRMEM");
-      return;
+      continue;
     } else if (result == LUA_ERRERR) {
       SDL_Log("LUA_ERRERR");
-      return;
+      continue;
       // what
       // this works on the nix version but not the windows vcpkg version
     }
 #ifdef LUA_ERRGCM
     else if (result == LUA_ERRGCM) {
       SDL_Log("LUA_ERRGCMM");
-      return;
+      continue;
     }
 #endif
   }
