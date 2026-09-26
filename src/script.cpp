@@ -37,13 +37,12 @@ void scriptTickSystem(Engine* engine, double dt) {
       return;
       // what
       // this works on the nix version but not the windows vcpkg version
+    }
 #ifdef LUA_ERRGCM
-    } else if (result == LUA_ERRGCM) {
+    else if (result == LUA_ERRGCM) {
       SDL_Log("LUA_ERRGCMM");
       return;
     }
-#else
-  }
 #endif
   }
 }
