@@ -27,7 +27,10 @@ struct Script : public Component {
       return;
     }
 
-    luaL_dofile(engine->lua, path);
+    if (luaL_dofile(engine->lua, path) != LUA_OK) {
+      SDL_Log("Failed to load Lua file!");
+      return;
+    };
 
     lua_getglobal(engine->lua, "tick");
 
