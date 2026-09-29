@@ -5,6 +5,8 @@ set(SOURCES
   world.cpp
   mind.cpp
   script.cpp
+  lua_helpers/render.cpp
+  lua_helpers/event.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

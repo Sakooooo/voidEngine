@@ -1,6 +1,6 @@
 print("Hello!")
 print("I was read successfully")
 
-function void.tick(self, dt)
+function me.tick(self, dt)
 	print("I'm ticking!")
 end

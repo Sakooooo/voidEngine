@@ -7,6 +7,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <cstddef>
 #include <lauxlib.h>
+#include <lua.h>
 #include <lualib.h>
 
 Engine::Engine() {
@@ -58,6 +59,11 @@ Engine::Engine() {
   }
 
   luaL_openlibs(lua);
+
+  SDL_Log("Creating global function table");
+  lua_setglobal(lua, "void");
+  lua_newtable(lua);
+  lua_pushvalue(lua, -1);
 
   initialized = true;
 }

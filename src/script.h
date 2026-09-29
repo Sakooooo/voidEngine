@@ -13,7 +13,7 @@ struct Script : public Component {
   // TODO: We're going to need something like res:// to make this a lot easier
   const char* path;
   int tickRef{};
-  int voidRef{}; // everything from the void table
+  int meRef{}; // everything from the void table
   bool initalized{false};
 
   void onLoad(Engine* engine, Entity e) {
@@ -42,14 +42,13 @@ struct Script : public Component {
                  "__index"); // metatable functions equal to global functions
     lua_setmetatable(engine->lua, -2); // set metatable
 
-    // void table
-    lua_newtable(engine->lua); // push void table
+    // me table
+    lua_newtable(engine->lua); // push me table
     lua_pushvalue(engine->lua, -1);
-    voidRef = luaL_ref(engine->lua,
-                       LUA_REGISTRYINDEX); // grab reference for later use
-    lua_setfield(
-        engine->lua, -2,
-        "void"); // set the environment table to have our new void table
+    meRef = luaL_ref(engine->lua,
+                     LUA_REGISTRYINDEX); // grab reference for later use
+    lua_setfield(engine->lua, -2,
+                 "me"); // set the environment table to have our new me table
     lua_setupvalue(
         engine->lua, -2,
         1); // set the script's environment table to our environment table
@@ -61,7 +60,7 @@ struct Script : public Component {
       return;
     }
 
-    lua_rawgeti(engine->lua, LUA_REGISTRYINDEX, voidRef);
+    lua_rawgeti(engine->lua, LUA_REGISTRYINDEX, meRef);
 
     lua_getfield(engine->lua, -1, "tick");
     if (!lua_isfunction(engine->lua, -1)) {
