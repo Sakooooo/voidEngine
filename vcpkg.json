@@ -7,7 +7,7 @@
         "sdl3-renderer-binding"
       ]
     },
-    "lua",
+    "luau",
     "sdl3",
     {
       "name": "sdl3-image",

@@ -6,7 +6,6 @@
 #include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstddef>
-#include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
 
@@ -19,7 +18,7 @@ Engine::Engine() {
   }
 
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
-				   &window, &renderer)) {
+                                   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }

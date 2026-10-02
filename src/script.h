@@ -5,9 +5,8 @@
 #include "world.h"
 #include <SDL3/SDL_log.h>
 #include <filesystem>
-#include <lauxlib.h>
 #include <lua.h>
-#include <lua.hpp>
+#include <lualib.h>
 
 struct Script : public Component {
   // TODO: We're going to need something like res:// to make this a lot easier

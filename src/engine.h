@@ -4,7 +4,7 @@
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
-#include <lua.hpp>
+#include <lua.h>
 #include <memory>
 
 // gui.h doesn't need anything from engine.h, so a forward declaration is all

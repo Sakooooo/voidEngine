@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Game engines are built statically cause that's what it do Yugi!
 
 if(WIN32)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   set(VCPKG_TARGET_TRIPLET "x64-windows-static")
 else()
   # Do people seriously use vcpkg on anything other than windows :D
@@ -30,7 +31,7 @@ find_package(SDL3 CONFIG REQUIRED)
 
 find_package(SDL3_image CONFIG REQUIRED)
 
-find_package(Lua REQUIRED)
+find_package(unofficial-luau CONFIG REQUIRED)
 
 find_package(imgui CONFIG REQUIRED)
 

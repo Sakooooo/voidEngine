@@ -1,6 +1,6 @@
 #include "script.h"
-#include <lauxlib.h>
 #include <lua.h>
+#include <lualib.h>
 
 void scriptTickSystem(Engine* engine, double dt) {
   auto& world{World::get_instance()};
