@@ -31,7 +31,12 @@ find_package(SDL3 CONFIG REQUIRED)
 
 find_package(SDL3_image CONFIG REQUIRED)
 
+# TODO: Make this check for vcpkg instead
+if(WIN32)
 find_package(unofficial-luau CONFIG REQUIRED)
+else()
+  find_package(Luau CONFIG REQUIRED)
+endif()
 
 find_package(imgui CONFIG REQUIRED)
 
