@@ -9,6 +9,11 @@
 #include <lua.h>
 #include <lualib.h>
 
+static int c_function_test(lua_State* L) {
+  printf("I just got called from lua bro");
+  return 0;
+}
+
 Engine::Engine() {
   SDL_Log("Creating engine...");
 
@@ -18,7 +23,7 @@ Engine::Engine() {
   }
 
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
-                                   &window, &renderer)) {
+				   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
@@ -56,6 +61,9 @@ Engine::Engine() {
     SDL_Log("lua failed to load");
     return;
   }
+
+  lua_pushcfunction(lua, c_function_test, "myTestFunction");
+  lua_setglobal(lua, "myFunction");
 
   luaL_openlibs(lua);
 

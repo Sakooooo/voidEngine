@@ -31,6 +31,19 @@ struct Script : public Component {
     else
       printf("error: %s\n", lua_tostring(engine->lua, -1));
 
+    const char* test_2 = "myFunction()";
+    size_t test_2_size;
+
+    char* bytecode_2 =
+	luau_compile(test_2, strlen(test_2), nullptr, &test_2_size);
+    int result_2 = luau_load(engine->lua, "chunk", bytecode_2, test_2_size, 0);
+    free(bytecode_2);
+
+    if (result_2 == 0)
+      lua_pcall(engine->lua, 0, 0, 0);
+    else
+      printf("error: %s\n", lua_tostring(engine->lua, -1));
+
     SDL_Log("OnLoad for Script ran successfully.");
     initalized = true;
   }
