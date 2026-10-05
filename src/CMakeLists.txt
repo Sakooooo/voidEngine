@@ -28,22 +28,22 @@ endif()
 if (WIN32)
   target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3-static
-    unofficial::luau::Luau.VM 
-    unofficial::luau::Luau.Ast 
-    unofficial::luau::Luau.Common 
-    unofficial::luau::Luau.Config 
-    unofficial::luau::Luau.Compiler 
+    unofficial::luau::Luau.VM
+    unofficial::luau::Luau.Ast
+    unofficial::luau::Luau.Common
+    unofficial::luau::Luau.Config
+    unofficial::luau::Luau.Compiler
     SDL3_image::SDL3_image-static
     imgui::imgui
   )
 else()
   target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3
-    unofficial::luau::Luau.VM 
-    unofficial::luau::Luau.Ast 
-    unofficial::luau::Luau.Common 
-    unofficial::luau::Luau.Config
-    unofficial::luau::Luau.Compiler 
+    Luau.VM
+    Luau.Ast
+    Luau.Common
+    Luau.Config
+    Luau.Compiler
     SDL3_image::SDL3_image
     imgui::imgui
   )

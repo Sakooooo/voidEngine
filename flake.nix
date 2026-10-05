@@ -23,6 +23,7 @@
 	sdl3
 	sdl3-image
 	luau # This doesn't even have a dev package, shit!
+	python3 # for luau build
 	# upstream imgui package is outdated,
 	# TODO bug maintainer to update or do it yourself
 	(imgui.override {

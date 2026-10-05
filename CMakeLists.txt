@@ -35,7 +35,9 @@ find_package(SDL3_image CONFIG REQUIRED)
 if(WIN32)
 find_package(unofficial-luau CONFIG REQUIRED)
 else()
-  find_package(Luau CONFIG REQUIRED)
+  # I am NOT writing a nix package right now!
+  add_subdirectory(./third_party/luau)
+  # find_package(Luau CONFIG REQUIRED)
 endif()
 
 find_package(imgui CONFIG REQUIRED)
