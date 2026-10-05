@@ -1,9 +1,26 @@
 #include "world.h"
+#include "camera.h"
 #include "imgui.h"
 #include <cmath>
 
 void mySystem(SDL_Renderer* r) {
   auto& world{World::get_instance()};
+
+  // TODO: This is really dumb, it might be better to make a Camera struct that
+  // contains an Entity and an actual Camera2D struct and grab it from world as
+  // there can only be one camera in a World.
+
+  Camera2D camera;
+
+  for (const auto e : world.get_entities()) {
+    auto camera_comp = world.view<Camera2D>(e);
+    if (!camera_comp)
+      continue;
+
+    auto [myCamera] = *camera_comp;
+    camera = myCamera;
+    break;
+  }
 
   for (const auto e : world.get_entities()) {
     auto comps = world.view<Transform, Color>(e);
@@ -11,10 +28,10 @@ void mySystem(SDL_Renderer* r) {
       continue;
 
     auto [transform, color] = *comps;
-    SDL_FRect rect{transform.x, transform.y, 500, 500};
+    SDL_FRect rect{transform.x - camera.x, transform.y - camera.y, 500, 500};
     SDL_SetRenderDrawColor(
-        r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
-        static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));
+	r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
+	static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));
     SDL_RenderFillRect(r, &rect);
   }
 }

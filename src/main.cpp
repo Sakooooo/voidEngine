@@ -1,9 +1,11 @@
+#include "camera.h"
 #include "engine.h"
 #include "gui.h"
 #include "mind.h"
 #include "script.h"
 #include "world.h"
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 #include <cstdio>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -38,6 +40,9 @@ int main() {
   world.add_component<Transform>(entity, 200.0f, 400.0f);
   world.add_component<Color>(entity, 55, 155, 55, 255);
   world.add_component<Controllable>(entity, Mind{.controlled = true});
+  world.add_component<Camera2D>(entity, 200.0f, 400.0f, 800, 600);
+
+  auto [camera] = *world.view<Camera2D>(entity);
 
   auto secondEntity = world.createEntity();
   world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
@@ -119,6 +124,10 @@ int main() {
 
 	mindSystem(engine.keyboard_state);
 	ControllableSystem();
+      }
+
+      if (event.type == SDL_WINDOW_RESIZABLE) {
+	SDL_GetWindowSize(engine.window, &camera.width, &camera.height);
       }
     }
 

@@ -5,6 +5,7 @@ set(SOURCES
   world.cpp
   mind.cpp
   script.cpp
+  camera.cpp
   lua_helpers/render.cpp
   lua_helpers/event.cpp
 )
