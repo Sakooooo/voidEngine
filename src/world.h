@@ -2,6 +2,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 #include "engine.h"
+#include "types.h"
 #include <SDL3/SDL_render.h>
 #include <concepts>
 #include <cstdint>
@@ -23,11 +24,17 @@ concept ComponentConcept = std::derived_from<ComponentType, Component>;
 
 // to do this, just define void onLoad(Entity e)
 template <typename ComponentType>
-concept HasOnLoad = requires(ComponentType& component, Engine* engine, Entity e) { component.onLoad(engine, e); }; // not sure if this is a bad idea
+concept HasOnLoad =
+    requires(ComponentType& component, Engine* engine, Entity e) {
+      component.onLoad(engine, e);
+    }; // not sure if this is a bad idea
 
 struct Transform : public Component {
-  float x{};
-  float y{};
+  Vector2 pos;
+};
+
+struct Size : public Component {
+  float width, height{};
 };
 
 struct Color : public Component {
@@ -133,9 +140,7 @@ public:
 
   void set_engine(Engine& engine) { m_engine = &engine; }
 
-  Engine& engine() {
-    return *m_engine;
-  }
+  Engine& engine() { return *m_engine; }
 
   template <ComponentConcept ComponentType>
   Storage<ComponentType>& get_storage() {

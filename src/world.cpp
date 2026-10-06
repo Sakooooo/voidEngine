@@ -9,6 +9,8 @@ void mySystem(SDL_Renderer* r) {
   // TODO: This is really dumb, it might be better to make a Camera struct that
   // contains an Entity and an actual Camera2D struct and grab it from world as
   // there can only be one camera in a World.
+  // update: I think it should just rely on a current variable?? Pointer to
+  // camera maybe?
 
   Camera2D camera;
 
@@ -18,17 +20,20 @@ void mySystem(SDL_Renderer* r) {
       continue;
 
     auto [myCamera] = *camera_comp;
-    camera = myCamera;
-    break;
+    if (myCamera.current) {
+      camera = myCamera;
+      break;
+    }
   }
 
   for (const auto e : world.get_entities()) {
-    auto comps = world.view<Transform, Color>(e);
+    auto comps = world.view<Transform, Size, Color>(e);
     if (!comps)
       continue;
 
-    auto [transform, color] = *comps;
-    SDL_FRect rect{transform.x - camera.x, transform.y - camera.y, 250, 250};
+    auto [transform, size, color] = *comps;
+    SDL_FRect rect{transform.pos.x - camera.pos.x,
+		   transform.pos.y - camera.pos.y, size.width, size.height};
     SDL_SetRenderDrawColor(
 	r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
 	static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));

@@ -35,19 +35,12 @@ void ControllableSystem() {
       continue;
 
     if (controllable.forward)
-      transform.y -= 5;
+      transform.pos.y -= 5;
     if (controllable.left)
-      transform.x -= 5;
+      transform.pos.x -= 5;
     if (controllable.backward)
-      transform.y += 5;
+      transform.pos.y += 5;
     if (controllable.right)
-      transform.x += 5;
-
-    auto camera_query{world.view<Camera2D>(e)};
-
-    auto [camera] = *camera_query;
-
-    camera.x = transform.x + 250.0f / 2 - camera.width / 2;
-    camera.y = transform.y + 250.0f / 2 - camera.height / 2;
+      transform.pos.x += 5;
   }
 }

@@ -125,15 +125,15 @@ void EntityUI::Render() {
       if (ImGui::BeginTabItem(label.c_str())) {
 	ImGui::Text("Transform");
 	if (transform) {
-	  ImGui::SliderFloat("x", &transform->x, 0.0f, 2000.0f);
-	  ImGui::SliderFloat("y", &transform->y, 0.0f, 1000.0f);
+	  ImGui::SliderFloat("x", &transform->pos.x, 0.0f, 2000.0f);
+	  ImGui::SliderFloat("y", &transform->pos.y, 0.0f, 1000.0f);
 
 	  if (ImGui::Button("Remove Transform"))
 	    deferred.push_back(
 		[&world, e] { world.remove_component<Transform>(e); });
 	} else {
 	  if (ImGui::Button("Add Transform"))
-	    world.add_component<Transform>(e, 100.0f, 100.f);
+	    world.add_component<Transform>(e, Vector2{100.0f, 100.f});
 	}
 
 	ImGui::Text("Color");
@@ -164,8 +164,8 @@ void EntityUI::Render() {
 	// TODO: Unfuck this shitty implementation
 	if (camera) {
 	  ImGui::Text("Camera");
-	  ImGui::SliderFloat("Camera X:", &camera->x, -500.0f, 500.0f);
-	  ImGui::SliderFloat("Camera Y:", &camera->y, -500.0f, 500.0f);
+	  ImGui::SliderFloat("Camera X:", &camera->pos.x, -500.0f, 500.0f);
+	  ImGui::SliderFloat("Camera Y:", &camera->pos.y, -500.0f, 500.0f);
 	  ImGui::Text("Camera Width %i Camera Height %i", camera->width,
 		      camera->height);
 	}

@@ -38,29 +38,34 @@ int main() {
   world.set_engine(engine);
 
   auto entity = world.createEntity();
-  world.add_component<Transform>(entity, 0.0f, 0.0f);
+  world.add_component<Transform>(entity, Vector2{0.0f, 0.0f});
+  world.add_component<Size>(entity, 250.0f, 250.0f);
   world.add_component<Color>(entity, 55, 155, 55, 255);
   world.add_component<Controllable>(entity, Mind{.controlled = true});
-  world.add_component<Camera2D>(entity, 0.0f, 0.0f, 800, 600);
+  world.add_component<Camera2D>(entity, Vector2{0.0f, 0.0f}, 800, 600, true,
+				true);
 
   auto [camera] = *world.view<Camera2D>(entity);
-  camera.x = 0.0f + 250.0f / 2 - camera.width / 2;
-  camera.y = 0.0f + 250.0f / 2 - camera.height / 2;
+  camera.pos.x = 0.0f + 250.0f / 2 - camera.width / 2;
+  camera.pos.y = 0.0f + 250.0f / 2 - camera.height / 2;
 
   auto secondEntity = world.createEntity();
-  world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
+  world.add_component<Transform>(secondEntity, Vector2{50.0f, 75.0f});
+  world.add_component<Size>(entity, 50.0f, 50.0f);
   world.add_component<Color>(secondEntity, 255, 155, 55, 255);
   world.add_component<Script>(secondEntity, "./scripts/test.lua");
 
   auto thirdEntity = world.createEntity();
-  world.add_component<Transform>(thirdEntity, 200.0f, 800.0f);
+  world.add_component<Transform>(thirdEntity, Vector2{25.0f, 50.0f});
+  world.add_component<Size>(thirdEntity, 50.0f, 50.0f);
+  world.add_component<Color>(thirdEntity, 55, 55, 55, 255);
 
   // test view()
   {
     if (auto comps = world.view<Transform, Color>(entity)) {
       printf("I got entity with transform and color\n");
       auto& [pos, color] = *comps;
-      printf("Transform: %f, %f\n", pos.x, pos.y);
+      printf("Transform: %f, %f\n", pos.pos.x, pos.pos.y);
       printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
     } else {
       printf("nah\n");
@@ -69,7 +74,7 @@ int main() {
     if (auto comps = world.view<Transform, Color>(secondEntity)) {
       printf("I got entity with transform and color\n");
       auto& [pos, color] = *comps;
-      printf("Transform: %f, %f\n", pos.x, pos.y);
+      printf("Transform: %f, %f\n", pos.pos.x, pos.pos.y);
       printf("Color: %i %i %i %i\n", color.r, color.g, color.b, color.a);
     } else {
       printf("nah\n");
@@ -133,6 +138,8 @@ int main() {
 	SDL_GetWindowSize(engine.window, &camera.width, &camera.height);
       }
     }
+
+    Camera::Camera2DSystem();
 
     scriptTickSystem(&engine, deltaTime);
 
