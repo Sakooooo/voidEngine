@@ -12,7 +12,7 @@ struct Camera2D : public Component {
 
 namespace Camera {
 
-Vector2 updateFollowCords(Vector2 pos, Size size, Camera2D camera);
+Vector2 updateFollowCords(Transform transform, Camera2D camera);
 void Camera2DSystem();
 } // namespace Camera
 

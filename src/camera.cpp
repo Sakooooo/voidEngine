@@ -1,23 +1,24 @@
 #include "camera.h"
 
-Vector2 Camera::updateFollowCords(Vector2 pos, Size size, Camera2D camera) {
+Vector2 Camera::updateFollowCords(Transform transform, Camera2D camera) {
 
-  return Vector2{.x = pos.x + size.width / 2 - camera.width / 2,
-		 .y = pos.y + size.height / 2 - camera.height / 2};
+  return Vector2{.x = transform.pos.x + transform.width / 2 - camera.width / 2,
+		 .y = transform.pos.y + transform.height / 2 -
+		     camera.height / 2};
 }
 
 void Camera::Camera2DSystem() {
   auto& world = World::get_instance();
 
   for (const auto e : world.get_entities()) {
-    auto query{world.view<Camera2D, Transform, Size>(e)};
+    auto query{world.view<Camera2D, Transform>(e)};
 
     if (!query)
       continue;
 
-    auto [camera, transform, size] = *query;
+    auto [camera, transform] = *query;
 
     if (camera.follow)
-      camera.pos = Camera::updateFollowCords(transform.pos, size, camera);
+      camera.pos = Camera::updateFollowCords(transform, camera);
   }
 }

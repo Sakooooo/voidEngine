@@ -38,8 +38,7 @@ int main() {
   world.set_engine(engine);
 
   auto entity = world.createEntity();
-  world.add_component<Transform>(entity, Vector2{0.0f, 0.0f});
-  world.add_component<Size>(entity, 250.0f, 250.0f);
+  world.add_component<Transform>(entity, Vector2{0.0f, 0.0f}, 250.0f, 250.0f);
   world.add_component<Color>(entity, 55, 155, 55, 255);
   world.add_component<Controllable>(entity, Mind{.controlled = true});
   world.add_component<Camera2D>(entity, Vector2{0.0f, 0.0f}, 800, 600, true,
@@ -50,14 +49,14 @@ int main() {
   camera.pos.y = 0.0f + 250.0f / 2 - camera.height / 2;
 
   auto secondEntity = world.createEntity();
-  world.add_component<Transform>(secondEntity, Vector2{50.0f, 75.0f});
-  world.add_component<Size>(entity, 50.0f, 50.0f);
+  world.add_component<Transform>(secondEntity, Vector2{50.0f, 75.0f}, 50.0f,
+				 50.0f);
   world.add_component<Color>(secondEntity, 255, 155, 55, 255);
   world.add_component<Script>(secondEntity, "./scripts/test.lua");
 
   auto thirdEntity = world.createEntity();
-  world.add_component<Transform>(thirdEntity, Vector2{25.0f, 50.0f});
-  world.add_component<Size>(thirdEntity, 50.0f, 50.0f);
+  world.add_component<Transform>(thirdEntity, Vector2{25.0f, 50.0f}, 50.0f,
+				 50.0f);
   world.add_component<Color>(thirdEntity, 55, 55, 55, 255);
 
   // test view()

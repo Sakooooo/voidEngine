@@ -27,13 +27,14 @@ void mySystem(SDL_Renderer* r) {
   }
 
   for (const auto e : world.get_entities()) {
-    auto comps = world.view<Transform, Size, Color>(e);
+    auto comps = world.view<Transform, Color>(e);
     if (!comps)
       continue;
 
-    auto [transform, size, color] = *comps;
+    auto [transform, color] = *comps;
     SDL_FRect rect{transform.pos.x - camera.pos.x,
-		   transform.pos.y - camera.pos.y, size.width, size.height};
+		   transform.pos.y - camera.pos.y, transform.width,
+		   transform.height};
     SDL_SetRenderDrawColor(
 	r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
 	static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));

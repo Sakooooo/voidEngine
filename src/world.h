@@ -31,9 +31,6 @@ concept HasOnLoad =
 
 struct Transform : public Component {
   Vector2 pos;
-};
-
-struct Size : public Component {
   float width, height{};
 };
 

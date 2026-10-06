@@ -125,15 +125,19 @@ void EntityUI::Render() {
       if (ImGui::BeginTabItem(label.c_str())) {
 	ImGui::Text("Transform");
 	if (transform) {
+	  ImGui::Text("Position");
 	  ImGui::SliderFloat("x", &transform->pos.x, 0.0f, 2000.0f);
 	  ImGui::SliderFloat("y", &transform->pos.y, 0.0f, 1000.0f);
+	  ImGui::SliderFloat("width", &transform->width, 0.0f, 1000.0f);
+	  ImGui::SliderFloat("height", &transform->height, 0.0f, 1000.0f);
 
 	  if (ImGui::Button("Remove Transform"))
 	    deferred.push_back(
 		[&world, e] { world.remove_component<Transform>(e); });
 	} else {
 	  if (ImGui::Button("Add Transform"))
-	    world.add_component<Transform>(e, Vector2{100.0f, 100.f});
+	    world.add_component<Transform>(e, Vector2{100.0f, 100.f}, 50.0f,
+					   50.0f);
 	}
 
 	ImGui::Text("Color");
