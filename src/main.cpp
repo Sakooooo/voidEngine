@@ -5,6 +5,7 @@
 #include "script.h"
 #include "world.h"
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_video.h>
 #include <cstdio>
 #include <imgui.h>
@@ -37,12 +38,14 @@ int main() {
   world.set_engine(engine);
 
   auto entity = world.createEntity();
-  world.add_component<Transform>(entity, 200.0f, 400.0f);
+  world.add_component<Transform>(entity, 0.0f, 0.0f);
   world.add_component<Color>(entity, 55, 155, 55, 255);
   world.add_component<Controllable>(entity, Mind{.controlled = true});
-  world.add_component<Camera2D>(entity, 200.0f, 400.0f, 800, 600);
+  world.add_component<Camera2D>(entity, 0.0f, 0.0f, 800, 600);
 
   auto [camera] = *world.view<Camera2D>(entity);
+  camera.x = 0.0f + 250.0f / 2 - camera.width / 2;
+  camera.y = 0.0f + 250.0f / 2 - camera.height / 2;
 
   auto secondEntity = world.createEntity();
   world.add_component<Transform>(secondEntity, 800.0f, 400.0f);
@@ -126,7 +129,7 @@ int main() {
 	ControllableSystem();
       }
 
-      if (event.type == SDL_WINDOW_RESIZABLE) {
+      if (event.type == SDL_EVENT_WINDOW_RESIZED) {
 	SDL_GetWindowSize(engine.window, &camera.width, &camera.height);
       }
     }

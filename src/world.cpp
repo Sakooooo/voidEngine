@@ -28,7 +28,7 @@ void mySystem(SDL_Renderer* r) {
       continue;
 
     auto [transform, color] = *comps;
-    SDL_FRect rect{transform.x - camera.x, transform.y - camera.y, 500, 500};
+    SDL_FRect rect{transform.x - camera.x, transform.y - camera.y, 250, 250};
     SDL_SetRenderDrawColor(
 	r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
 	static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));

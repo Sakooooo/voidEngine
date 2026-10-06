@@ -1,5 +1,6 @@
 // IT'S GOT A MIND OF IT'S OWN OH GOD
 #include "mind.h"
+#include "camera.h"
 #include <SDL3/SDL_keyboard.h>
 
 void mindSystem(const bool* keyboard_state) {
@@ -41,5 +42,12 @@ void ControllableSystem() {
       transform.y += 5;
     if (controllable.right)
       transform.x += 5;
+
+    auto camera_query{world.view<Camera2D>(e)};
+
+    auto [camera] = *camera_query;
+
+    camera.x = transform.x + 250.0f / 2 - camera.width / 2;
+    camera.y = transform.y + 250.0f / 2 - camera.height / 2;
   }
 }
