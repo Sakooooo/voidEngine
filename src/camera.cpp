@@ -7,6 +7,7 @@ Vector2 Camera::updateFollowCords(Transform transform, Camera2D camera) {
 		     camera.height / 2};
 }
 
+// TODO: Handle multiple cameras that aren't focused
 void Camera::Camera2DSystem() {
   auto& world = World::get_instance();
 

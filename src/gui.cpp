@@ -170,8 +170,20 @@ void EntityUI::Render() {
 	  ImGui::Text("Camera");
 	  ImGui::SliderFloat("Camera X:", &camera->pos.x, -500.0f, 500.0f);
 	  ImGui::SliderFloat("Camera Y:", &camera->pos.y, -500.0f, 500.0f);
+	  ImGui::Checkbox("Camera follows this entity?", &camera->follow);
+	  ImGui::Checkbox("Make this Camera the focused one?",
+			  &camera->current);
 	  ImGui::Text("Camera Width %i Camera Height %i", camera->width,
 		      camera->height);
+	  if (ImGui::Button("Remove Camera")) {
+	    deferred.push_back(
+		[&world, e] { world.remove_component<Camera2D>(e); });
+	  };
+	} else {
+	  if (ImGui::Button("Add Camera")) {
+	    world.add_component<Camera2D>(e, Vector2{0.0f, 0.0f}, 800, 600,
+					  false, false);
+	  }
 	}
 
 	ImGui::Text("Controllable");
