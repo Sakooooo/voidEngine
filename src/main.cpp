@@ -25,13 +25,19 @@ int main() {
 
   EntityUI my_entity_gui{engine.gui_manager.get()};
 
+  EntityComponentTreeViewer my_tree_gui{engine.gui_manager.get()};
+
   MyDebugUi debug_ui{engine.gui_manager.get()};
 
   debug_ui.entity_debug = &my_entity_gui;
 
+  debug_ui.tree = &my_tree_gui;
+
   engine.gui_manager->AddPanel(&debug_ui);
 
   engine.gui_manager->AddPanel(&my_entity_gui);
+
+  engine.gui_manager->AddPanel(&my_tree_gui);
 
   auto& world = World::get_instance();
 

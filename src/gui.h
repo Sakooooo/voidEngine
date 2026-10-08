@@ -48,6 +48,12 @@ public:
   void Render() override;
 };
 
+class EntityComponentTreeViewer : public Gui {
+public:
+  explicit EntityComponentTreeViewer(GuiManager* manager) : Gui(manager) {}
+  void Render() override;
+};
+
 class MyTestGui : public Gui {
 public:
   explicit MyTestGui(GuiManager* manager) : Gui(manager) { visible = true; }
@@ -60,6 +66,7 @@ public:
   explicit MyDebugUi(GuiManager* manager) : Gui(manager) {}
   void Render() override;
   EntityUI* entity_debug = nullptr;
+  EntityComponentTreeViewer* tree = nullptr;
 };
 
 #endif

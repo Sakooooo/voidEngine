@@ -65,6 +65,14 @@ void GuiManager::RenderPanels() {
   ImGui::Render();
 }
 
+void EntityComponentTreeViewer::Render() {
+  ImGui::Begin("Entity Tree");
+
+  ImGui::Text("I am the entity tree thingy");
+
+  ImGui::End();
+}
+
 void MyTestGui::Render() {
   static float f = 0.0f;
   static int counter = 0;
@@ -226,6 +234,10 @@ void MyDebugUi::Render() {
 
   if (entity_debug)
     ImGui::Checkbox("Show Entity Debug UI", &entity_debug->visible);
+
+  if (tree) {
+    ImGui::Checkbox("View Entity Component Tree", &tree->visible);
+  }
 
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
 	      1000.0f / manager->io->Framerate, manager->io->Framerate);
