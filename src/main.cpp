@@ -134,7 +134,7 @@ int main() {
       }
 
       if (event.type == SDL_EVENT_WINDOW_RESIZED) {
-	SDL_GetWindowSize(engine.window, &camera.width, &camera.height);
+	Camera::UpdateCameraSize(&engine);
       }
     }
 

@@ -12,7 +12,7 @@ void mySystem(SDL_Renderer* r) {
   // update: I think it should just rely on a current variable?? Pointer to
   // camera maybe?
 
-  Camera2D camera;
+  Camera2D* camera;
 
   for (const auto e : world.get_entities()) {
     auto camera_comp = world.view<Camera2D>(e);
@@ -21,7 +21,7 @@ void mySystem(SDL_Renderer* r) {
 
     auto [myCamera] = *camera_comp;
     if (myCamera.current) {
-      camera = myCamera;
+      camera = &myCamera;
       break;
     }
   }
@@ -32,9 +32,16 @@ void mySystem(SDL_Renderer* r) {
       continue;
 
     auto [transform, color] = *comps;
-    SDL_FRect rect{transform.pos.x - camera.pos.x,
-		   transform.pos.y - camera.pos.y, transform.width,
-		   transform.height};
+    SDL_FRect rect;
+
+    if (camera) {
+      rect = {transform.pos.x - camera->pos.x, transform.pos.y - camera->pos.y,
+	      transform.width, transform.height};
+    } else {
+      rect = {transform.pos.x, transform.pos.y, transform.width,
+	      transform.height};
+    };
+
     SDL_SetRenderDrawColor(
 	r, static_cast<Uint8>(color.r), static_cast<Uint8>(color.g),
 	static_cast<Uint8>(color.b), static_cast<Uint8>(color.a));

@@ -23,3 +23,19 @@ void Camera::Camera2DSystem() {
       camera.pos = Camera::updateFollowCords(transform, camera);
   }
 }
+
+void Camera::UpdateCameraSize(Engine* engine) {
+  auto& world = World::get_instance();
+
+  for (const auto e : world.get_entities()) {
+    auto query{world.view<Camera2D>(e)};
+
+    if (!query)
+      continue;
+
+    auto [camera] = *query;
+
+    if (camera.current)
+      SDL_GetWindowSize(engine->window, &camera.width, &camera.height);
+  }
+}
