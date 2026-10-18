@@ -33,13 +33,26 @@ find_package(SDL3_image CONFIG REQUIRED)
 
 # TODO: Make this check for vcpkg instead
 if(WIN32)
-find_package(unofficial-luau CONFIG REQUIRED)
+  find_package(unofficial-luau CONFIG REQUIRED)
+  find_package(imgui CONFIG REQUIRED)
 else()
   # I am NOT writing a nix package right now!
   add_subdirectory(./third_party/luau)
   # find_package(Luau CONFIG REQUIRED)
+  add_library(imgui STATIC
+    ./third_party/imgui/imgui.cpp
+    ./third_party/imgui/imgui_demo.cpp
+    ./third_party/imgui/imgui_draw.cpp
+    ./third_party/imgui/imgui_tables.cpp
+    ./third_party/imgui/imgui_widgets.cpp
+    ./third_party/imgui/backends/imgui_impl_sdl3.cpp
+    ./third_party/imgui/backends/imgui_impl_sdlrenderer3.cpp
+  )
+  target_link_libraries(imgui PUBLIC SDL3::SDL3)
+  target_include_directories(imgui PUBLIC ./third_party/imgui ./third_party/imgui/backends)
+
 endif()
 
-find_package(imgui CONFIG REQUIRED)
+
 
 add_subdirectory(src)
