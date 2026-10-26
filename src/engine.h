@@ -7,10 +7,7 @@
 #include <lua.h>
 #include <memory>
 
-// gui.h doesn't need anything from engine.h, so a forward declaration is all
-// that's needed here. Including gui.h from this header (while gui.h included
-// engine.h) created an include cycle, which is why clang "couldn't find" it.
-class GuiManager;
+class World;
 
 class Engine {
 public:
@@ -19,10 +16,10 @@ public:
   SDL_Renderer* renderer{nullptr};
   const bool* keyboard_state{SDL_GetKeyboardState(nullptr)};
 
-  std::unique_ptr<GuiManager> gui_manager;
+  std::unique_ptr<World> world;
 
   bool initialized{false};
-  lua_State* lua;
+  lua_State* lua{nullptr};
 
   Engine();
   ~Engine();

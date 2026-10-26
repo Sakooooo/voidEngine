@@ -6,8 +6,7 @@ set(SOURCES
   mind.cpp
   script.cpp
   camera.cpp
-  lua_helpers/render.cpp
-  lua_helpers/event.cpp
+  system.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

@@ -1,212 +1,169 @@
 // I gotta rework this later :(
 #ifndef WORLD_H
 #define WORLD_H
+#include "base_components.h"
 #include "engine.h"
 #include "types.h"
 #include <SDL3/SDL_render.h>
+#include <cassert>
 #include <concepts>
 #include <cstdint>
-#include <limits>
+#include <cstdio>
 #include <memory>
-#include <optional>
-#include <tuple>
 #include <typeindex>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 using Entity = std::uint32_t;
 
-struct Component {};
-
 template <typename ComponentType>
 concept ComponentConcept = std::derived_from<ComponentType, Component>;
 
-// to do this, just define void onLoad(Entity e)
-template <typename ComponentType>
-concept HasOnLoad =
-    requires(ComponentType& component, Engine* engine, Entity e) {
-      component.onLoad(engine, e);
-    }; // not sure if this is a bad idea
-
-struct Transform : public Component {
-  Vector2 pos;
-  float width, height{};
-};
-
-struct Color : public Component {
-  int r{};
-  int g{};
-  int b{};
-  int a{};
-};
-
-struct Rainbow : public Component {
-  float speed{1.0f};
-  float hue{0.0f};
-};
-
-template <ComponentConcept ComponentType>
-class SparseSet {
+/// Class that is used by Storage to be able to store component stores in single
+/// containers like std::vector
+class IStorage {
 public:
-  ComponentType& insert(Entity key, const ComponentType& component) {
-    ensure_sparse_size(key);
-
-    if (m_sparse[key] == INVALID) {
-      m_sparse[key] = m_dense.size();
-      m_dense_keys.push_back(key);
-      m_dense.push_back(component);
-    } else {
-      m_dense[m_sparse[key]] = component;
-    }
-
-    return m_dense[m_sparse[key]];
-  }
-
-  void remove(Entity key) {
-    if (!contains(key))
-      return;
-
-    auto index = m_sparse[key];
-    auto last = m_dense.size() - 1;
-
-    m_dense[index] = std::move(m_dense[last]);
-    m_dense_keys[index] = m_dense_keys[last];
-    m_sparse[m_dense_keys[index]] = index;
-
-    m_dense.pop_back();
-    m_dense_keys.pop_back();
-    m_sparse[key] = INVALID;
-  }
-
-  bool contains(Entity key) const {
-    return key < m_sparse.size() && m_sparse[key] != INVALID;
-  }
-
-  ComponentType* get(Entity key) {
-    if (!contains(key))
-      return nullptr;
-    return &m_dense[m_sparse[key]];
-  }
-
-  // This is to get all of the entities.
-  const auto& get_entities() const { return m_dense_keys; }
-
-private:
-  void ensure_sparse_size(Entity key) {
-    if (key >= m_sparse.size())
-      m_sparse.resize(key + 1, INVALID);
-  }
-  static constexpr std::size_t INVALID{std::numeric_limits<std::size_t>::max()};
-  std::vector<std::size_t> m_sparse{};
-  std::vector<Entity> m_dense_keys{};
-  std::vector<ComponentType> m_dense{};
-};
-
-struct IStorage {
   virtual ~IStorage() = default;
-  virtual void remove_if_present(Entity) = 0;
+  virtual void remove(Entity entity) = 0;
+  virtual bool has(Entity entity) const = 0;
 };
 
+/// Stores all components for entities of type ComponentType that matches the
+/// ComponentConcept (anything derived from the Component struct)
 template <ComponentConcept ComponentType>
 class Storage : public IStorage {
 public:
-  void remove_if_present(Entity e) override { m_storage.remove(e); }
-
-  template <typename... Args>
-  ComponentType& add_component(Entity e, Args&&... args) {
-    return m_storage.insert(e, ComponentType{{}, std::forward<Args>(args)...});
+  /// Add an Entity and it's Component to the Storage
+  void append(Entity entity, ComponentType component) {
+    m_storage[entity] = component;
   }
 
-  ComponentType* get_component(Entity e) { return m_storage.get(e); }
+  /// Grab the specific Component for an Entity
+  ComponentType& get(Entity entity) {
+    auto it = m_storage.find(entity);
+    assert(it != m_storage.end() && "Entity does not have this component.");
+    return it->second;
+  }
 
-  void remove_component(Entity e) { m_storage.remove(e); }
+  /// Check if the Storage contains the Entity
+  bool has(Entity entity) const {
+    return m_storage.find(entity) != m_storage.end();
+  }
 
-  const auto& get_entities() const { return m_storage.get_entities(); }
+  /// Remove an entity from the Storage
+  void remove(Entity entity) { m_storage.erase(entity); }
+
+  /// Returns reference to Storage's internal m_storage
+  std::unordered_map<Entity, ComponentType>& all() { return m_storage; }
 
 private:
-  SparseSet<ComponentType> m_storage{};
+  std::unordered_map<Entity, ComponentType> m_storage{};
 };
 
+/// Controls the entire ECS
 class World {
 public:
-  static World& get_instance() {
-    static World instance{};
-    return instance;
+  /// Create a new entity, which is just another ID
+  /// Checks for any available free entities in the m_free vector,
+  /// otherwise it will increment the m_nextId variable
+  Entity create_entity() {
+    Entity id;
+    if (!m_free.empty()) {
+      id = m_free.back();
+      m_free.pop_back();
+    } else {
+      id = m_nextId++;
+    }
+    m_entities.push_back(id);
+    if (id >= m_entity_alive.size()) {
+      m_entity_alive.resize(id + 1);
+    }
+    m_entity_alive[id] = true;
+    return id;
   }
 
-  void set_engine(Engine& engine) { m_engine = &engine; }
+  /// Destroy an entity, removing it from all Storages and adding it to the
+  /// m_free list for later reuse
+  void destroy_entity(Entity entity) {
+    for (auto& [typeIndex, array] : m_storages) {
+      array->remove(entity);
+    }
+    for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
+      if (*it == entity) {
+	m_entities.erase(it);
+	break;
+      }
+    }
+    m_entity_alive[entity] = false;
+    m_free.push_back(entity);
+  }
 
-  Engine& engine() { return *m_engine; }
+  bool is_alive(Entity entity) { return m_entity_alive[entity]; }
 
+  /// Create or get the Storage of ComponentType
   template <ComponentConcept ComponentType>
-  Storage<ComponentType>& get_storage() {
-    auto [it, inserted] =
-	m_storages.try_emplace(std::type_index(typeid(ComponentType)), nullptr);
-    if (inserted)
-      it->second = std::make_unique<Storage<ComponentType>>();
-    return *static_cast<Storage<ComponentType>*>(it->second.get());
+  Storage<ComponentType>& get_storage_array() {
+    std::type_index typeIdx(typeid(ComponentType));
+    if (m_storages.find(typeIdx) == m_storages.end()) {
+      m_storages[typeIdx] = std::make_unique<Storage<ComponentType>>();
+    }
+    return *static_cast<Storage<ComponentType>*>(m_storages[typeIdx].get());
   }
 
-  template <ComponentConcept ComponentType, typename... Args>
-  ComponentType& add_component(Entity e, Args&&... args) {
-    auto& storage{get_storage<ComponentType>()};
-    auto& component = storage.add_component(e, std::forward<Args>(args)...);
-    if constexpr (HasOnLoad<ComponentType>)
-      component.onLoad(m_engine, e);
-    return component;
-  }
-
+  /// Adds a component to an Entity
   template <ComponentConcept ComponentType>
-  void remove_component(Entity e) {
-    auto& storage{get_storage<ComponentType>()};
-    storage.remove_component(e);
+  ComponentType& add_component(Entity entity, ComponentType component) {
+    auto& array = get_storage_array<ComponentType>();
+    array.append(entity, component);
+    return array.get(entity);
   }
 
+  /// Check if an Entity has a specific component
   template <ComponentConcept ComponentType>
-  ComponentType* get_component(Entity e) {
-    auto& storage{get_storage<ComponentType>()};
-    return storage.get_component(e);
+  bool has_component(Entity entity) {
+    return get_storage_array<ComponentType>().has(entity);
   }
 
-  // Returns references to all of the requested components if the entity has
-  // every one of them, otherwise nullopt. The references point into the
-  // component storages, so don't hold on to them across an add_component of
-  // the same type.
+  /// Return the list of all entities
+  const std::vector<Entity>& all_entities() const { return m_entities; }
+
+  /// Get a specific component of a specific entity
+  template <ComponentConcept ComponentType>
+  ComponentType& get_component(Entity entity) {
+    return get_storage_array<ComponentType>().get(entity);
+  }
+
+  /// Run a function for every entity which meets the following template
+  /// Pass it in like [](Entity entity, ComponentType& Component...)
+  template <ComponentConcept... Components, typename Func>
+  void each(Func func) {
+    for (Entity entity : m_entities) {
+      bool hasAll = (has_component<Components>(entity) && ...);
+      if (hasAll) {
+	func(entity, get_component<Components>(entity)...);
+      }
+    }
+  }
+
   template <ComponentConcept... Components>
-  std::optional<std::tuple<Components&...>> view(Entity e) {
-    std::tuple<Components*...> ptrs{get_component<Components>(e)...};
-    if (!std::apply([](auto*... p) { return (p && ...); }, ptrs))
-      return std::nullopt;
-    return std::apply(
-	[](auto*... p) { return std::tuple<Components&...>(*p...); }, ptrs);
-  }
-
-  const std::vector<Entity>& get_entities() const { return m_entities; }
-
-  Entity createEntity() {
-    Entity newEntity{nextId++};
-    m_entities.push_back(newEntity);
-    return newEntity;
-  }
-
-  void destroyEntity(Entity e) {
-    for (auto& [type, storage] : m_storages)
-      storage->remove_if_present(e);
-    std::erase(m_entities, e);
+  void remove_componet(Entity entity) {
+    if (has_component<Component>(entity))
+      get_storage_array<Component>().remove(entity);
   }
 
 private:
-  // prevent new world
-  World() = default;
-  Entity nextId = 0;
+  /// The next ID to assign
+  Entity m_nextId = 0;
+  /// The list of live entities
   std::vector<Entity> m_entities{};
-  std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages{};
-  Engine* m_engine{nullptr};
+  std::vector<bool> m_entity_alive{};
+  std::vector<Entity> m_free{};
+  /// List of all Components and their respective Storages
+  std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
 };
 
-void mySystem(SDL_Renderer* r);
+// void mySystem(SDL_Renderer* r);
 
-void funnyRainbowSystem(double dt);
+// void funnyRainbowSystem(double dt);o
 
 #endif
