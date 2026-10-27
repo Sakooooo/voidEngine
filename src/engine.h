@@ -8,7 +8,9 @@
 #include <lua.h>
 #include <memory>
 
+// forward decls
 class World;
+class CGuiManager;
 
 class Engine {
 public:
@@ -19,6 +21,7 @@ public:
 
   std::unique_ptr<World> world;
   std::unique_ptr<CSystemManager> systems;
+  std::unique_ptr<CGuiManager> gui_manager;
 
   bool initialized{false};
   lua_State* lua{nullptr};

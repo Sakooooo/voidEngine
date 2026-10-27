@@ -50,6 +50,7 @@ int main() {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+      engine.gui_manager->event(&event);
       if (event.type == SDL_EVENT_QUIT) {
 	running = false;
       }
@@ -60,10 +61,16 @@ int main() {
       }
     }
 
+    engine.gui_manager->begin();
+
     engine.tick(deltaTime);
+
+    engine.gui_manager->render();
 
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
+
+    engine.gui_manager->end();
 
     SDL_RenderPresent(engine.renderer);
   }

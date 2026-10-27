@@ -76,6 +76,8 @@ Engine::Engine() {
 
   systems = std::make_unique<CSystemManager>(this, world.get());
 
+  gui_manager = std::make_unique<CGuiManager>(this);
+
   initialized = true;
   spdlog::trace("engine ok");
 }
