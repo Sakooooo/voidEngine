@@ -34,8 +34,10 @@ int main() {
 		  .height = 100.0f});
 
   TestGui test_gui;
-
   engine.gui_manager->add_gui(&test_gui);
+
+  TreeGui tree_gui;
+  engine.gui_manager->add_gui(&tree_gui);
 
   // TestSystem mySystem{};
 

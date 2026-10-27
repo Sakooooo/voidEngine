@@ -9,31 +9,27 @@
 
 // forward decls
 class Engine;
+class World;
 
 /// The interface for any GUIs, first derive a new class from IGui, override
 /// it's render() function with what's need then add it to CGuiManager with
 /// add_gui()
 class IGui {
 public:
-  IGui(const char* name = nullptr) {
-    this->name = name;
-    spdlog::trace("Creaitng a new Gui class");
-  };
-
-  /// Title name
-  const char* name;
+  IGui() { spdlog::trace("Creaitng a new Gui class"); };
 
   /// Render the ImGui GUI
-  virtual void render() = 0;
+  virtual void render(Engine* engine, World* world) = 0;
 };
 
 /// The main GUI manager class, currently manages ImGui windows for now.
 class CGuiManager {
 public:
-  CGuiManager(Engine* engine);
+  CGuiManager(Engine* engine, World* world);
 
   ImGuiIO* io{nullptr};
   Engine* engine;
+  World* world;
 
   /// Add derived IGui class to m_guis
   void add_gui(IGui* gui);

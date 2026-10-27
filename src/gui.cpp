@@ -3,9 +3,10 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
 
-CGuiManager::CGuiManager(Engine* engine) {
+CGuiManager::CGuiManager(Engine* engine, World* world) {
   spdlog::trace("creating CGuiManager");
   this->engine = engine;
+  this->world = world;
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   io = &ImGui::GetIO();
@@ -40,16 +41,7 @@ void CGuiManager::render() {
       continue;
     }
 
-    // check if name has been set
-    if (!gui->name) {
-      ImGui::Begin(gui->name);
-    } else {
-      ImGui::Begin("CGuiManager_default");
-    }
-
-    gui->render();
-
-    ImGui::End();
+    gui->render(engine, world);
   }
 
   ImGui::Render();

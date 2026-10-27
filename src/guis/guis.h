@@ -8,7 +8,13 @@
 
 class TestGui : public IGui {
 public:
-  TestGui(const char* name = "test") : IGui(name) {};
-  void render() override;
+  TestGui() : IGui() {};
+  void render(Engine* engine, World* world) override;
+};
+
+class TreeGui : public IGui {
+public:
+  TreeGui() : IGui() {};
+  void render(Engine* engine, World* world) override;
 };
 #endif
