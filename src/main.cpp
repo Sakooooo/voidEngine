@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "engine.h"
 #include "gui.h"
+#include "guis/guis.h"
 #include "mind.h"
 #include "script.h"
 #include "world.h"
@@ -31,6 +32,10 @@ int main() {
       Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
 		  .width = 100.0f,
 		  .height = 100.0f});
+
+  TestGui test_gui;
+
+  engine.gui_manager->add_gui(&test_gui);
 
   // TestSystem mySystem{};
 

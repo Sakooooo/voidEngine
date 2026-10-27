@@ -2,7 +2,6 @@
 #include "engine.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
-#include <spdlog/spdlog.h>
 
 CGuiManager::CGuiManager(Engine* engine) {
   spdlog::trace("creating CGuiManager");
@@ -33,8 +32,36 @@ void CGuiManager::begin() {
   ImGui::NewFrame();
 }
 
-void CGuiManager::render() { ImGui::Render(); }
+void CGuiManager::render() {
+  // iterate through every stored gui in m_guis
+  for (auto& gui : m_guis) {
+    // check if it's been freed
+    if (!gui) {
+      continue;
+    }
+
+    // check if name has been set
+    if (!gui->name) {
+      ImGui::Begin(gui->name);
+    } else {
+      ImGui::Begin("CGuiManager_default");
+    }
+
+    gui->render();
+
+    ImGui::End();
+  }
+
+  ImGui::Render();
+}
 
 void CGuiManager::end() {
   ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), engine->renderer);
+}
+
+void CGuiManager::add_gui(IGui* gui) { m_guis.push_back(gui); }
+
+void CGuiManager::remove_gui(IGui* gui) {
+  // Search through the entire vector for the system to remove
+  m_guis.erase(std::remove(m_guis.begin(), m_guis.end(), gui));
 }

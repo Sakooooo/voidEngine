@@ -1,7 +1,12 @@
+set(GUI_SOURCES
+  guis/test.cpp
+)
+
 set(SOURCES
   main.cpp
   engine.cpp
   gui.cpp
+  ${GUI_SOURCES}
   world.cpp
   mind.cpp
   script.cpp
