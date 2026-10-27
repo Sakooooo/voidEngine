@@ -6,8 +6,7 @@ set(SOURCES
   mind.cpp
   script.cpp
   camera.cpp
-  lua_helpers/render.cpp
-  lua_helpers/event.cpp
+  system.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -38,6 +37,7 @@ if (WIN32)
     imgui::imgui
   )
 else()
+
   target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3
     Luau.VM
@@ -46,7 +46,7 @@ else()
     Luau.Config
     Luau.Compiler
     SDL3_image::SDL3_image
-    imgui::imgui
+    imgui
   )
 endif()
 

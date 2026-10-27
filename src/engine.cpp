@@ -1,13 +1,17 @@
 #include "engine.h"
 #include "gui.h"
+#include "system.h"
+#include "world.h"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_iostream.h>
 #include <SDL3/SDL_log.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstddef>
+#include <cstdio>
 #include <lua.h>
 #include <lualib.h>
+#include <memory>
 
 static int c_function_test(lua_State* L) {
   printf("I just got called from lua bro");
@@ -46,13 +50,6 @@ Engine::Engine() {
     SDL_Log("Failed to load window icon: %s", SDL_GetError());
   }
 
-  gui_manager = std::make_unique<GuiManager>(window, renderer);
-  if (!gui_manager->initialized) {
-    SDL_Log("Failed to initialize GuiManager.");
-    return;
-  }
-  SDL_Log("GuiManager is ready.");
-
   SDL_Log("Prepare lua");
 
   lua = luaL_newstate();
@@ -67,6 +64,10 @@ Engine::Engine() {
 
   luaL_openlibs(lua);
 
+  world = std::make_unique<World>();
+
+  systems = std::make_unique<CSystemManager>(this, world.get());
+
   initialized = true;
 }
 
@@ -74,10 +75,12 @@ Engine::~Engine() {
   SDL_Log("Destroying engine...");
   if (lua)
     lua_close(lua);
-  gui_manager.reset();
   if (renderer)
     SDL_DestroyRenderer(renderer);
   if (window)
     SDL_DestroyWindow(window);
   SDL_Quit();
 }
+
+void Engine::tick(double deltaTime) { systems->tick(deltaTime); }
+void Engine::draw() {}
