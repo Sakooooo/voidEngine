@@ -5,9 +5,9 @@ CSystemManager::CSystemManager(Engine* engine, World* world) {
   this->world = world;
 }
 
-void CSystemManager::tick() {
+void CSystemManager::tick(double deltaTime) {
   for (auto& system : m_systems) {
-    system->tick(engine, world);
+    system->tick(engine, world, deltaTime);
   }
 }
 

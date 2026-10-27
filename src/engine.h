@@ -31,7 +31,7 @@ public:
   Engine(Engine&&) = delete;
   Engine& operator=(Engine&&) = delete;
 
-  void tick();
+  void tick(double deltaTime);
   void draw();
 };
 

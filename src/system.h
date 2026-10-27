@@ -11,7 +11,7 @@ class World;
 class ISystem {
 public:
   virtual ~ISystem() = default;
-  virtual void tick(Engine* engine, World* world) = 0;
+  virtual void tick(Engine* engine, World* world, double deltaTime) = 0;
 };
 
 // class TestSystem : public ISystem {
@@ -30,7 +30,7 @@ public:
   void add(ISystem* system);
   void remove(ISystem* system);
 
-  void tick();
+  void tick(double deltaTime);
 
 private:
   /// Private vector store that holds pointers to all currently loaded systems

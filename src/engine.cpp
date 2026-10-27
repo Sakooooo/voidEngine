@@ -82,5 +82,5 @@ Engine::~Engine() {
   SDL_Quit();
 }
 
-void Engine::tick() { systems->tick(); }
+void Engine::tick(double deltaTime) { systems->tick(deltaTime); }
 void Engine::draw() {}

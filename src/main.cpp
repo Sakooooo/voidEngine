@@ -56,7 +56,7 @@ int main() {
       }
     }
 
-    engine.tick();
+    engine.tick(deltaTime);
 
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);
