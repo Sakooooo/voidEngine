@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <memory>
+#include <spdlog/spdlog.h>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -70,6 +71,7 @@ public:
   /// Checks for any available free entities in the m_free vector,
   /// otherwise it will increment the m_nextId variable
   Entity create_entity() {
+    spdlog::trace("Creating new entity");
     Entity id;
     if (!m_free.empty()) {
       id = m_free.back();
@@ -88,11 +90,14 @@ public:
   /// Destroy an entity, removing it from all Storages and adding it to the
   /// m_free list for later reuse
   void destroy_entity(Entity entity) {
+    spdlog::trace("Destroying entity");
     for (auto& [typeIndex, array] : m_storages) {
+      spdlog::trace("removing entity from stores");
       array->remove(entity);
     }
     for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
       if (*it == entity) {
+	spdlog::trace("erase entity");
 	m_entities.erase(it);
 	break;
       }

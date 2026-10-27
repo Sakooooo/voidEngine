@@ -12,6 +12,7 @@
 #include <lua.h>
 #include <lualib.h>
 #include <memory>
+#include <spdlog/spdlog.h>
 
 static int c_function_test(lua_State* L) {
   printf("I just got called from lua bro");
@@ -19,19 +20,22 @@ static int c_function_test(lua_State* L) {
 }
 
 Engine::Engine() {
-  SDL_Log("Creating engine...");
+  spdlog::info("Creating engine...");
 
+  spdlog::trace("sdl video init");
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     SDL_Log("Failed to initialize SDL Video! %s", SDL_GetError());
     return;
   }
+  spdlog::trace("ok");
 
+  spdlog::trace("sdl renderer and window");
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
 				   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
-  SDL_Log("Created Window and Renderer.");
+  spdlog::trace("ok");
 
   // set app icon
   // :O this is cool
@@ -41,6 +45,7 @@ Engine::Engine() {
   };
   static constexpr std::size_t icon_size = sizeof(icon);
 
+  spdlog::trace("app icon");
   SDL_IOStream* icon_io = SDL_IOFromConstMem(icon, icon_size);
   SDL_Surface* icon_surface = IMG_Load_IO(icon_io, true); // closes io for you
   if (icon_surface) {
@@ -49,8 +54,9 @@ Engine::Engine() {
   } else {
     SDL_Log("Failed to load window icon: %s", SDL_GetError());
   }
+  spdlog::trace("ok");
 
-  SDL_Log("Prepare lua");
+  spdlog::trace("setting up luau");
 
   lua = luaL_newstate();
 
@@ -58,21 +64,24 @@ Engine::Engine() {
     SDL_Log("lua failed to load");
     return;
   }
+  spdlog::trace("ok");
 
   lua_pushcfunction(lua, c_function_test, "myTestFunction");
   lua_setglobal(lua, "myFunction");
 
   luaL_openlibs(lua);
 
+  spdlog::trace("do World constructor");
   world = std::make_unique<World>();
 
   systems = std::make_unique<CSystemManager>(this, world.get());
 
   initialized = true;
+  spdlog::trace("engine ok");
 }
 
 Engine::~Engine() {
-  SDL_Log("Destroying engine...");
+  spdlog::info("Destroying engine...");
   if (lua)
     lua_close(lua);
   if (renderer)

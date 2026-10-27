@@ -1,6 +1,8 @@
 #include "system.h"
+#include <spdlog/spdlog.h>
 
 CSystemManager::CSystemManager(Engine* engine, World* world) {
+  spdlog::trace("constructing CSystemManager");
   this->engine = engine;
   this->world = world;
 }
@@ -12,10 +14,14 @@ void CSystemManager::tick(double deltaTime) {
 }
 
 /// Add a system
-void CSystemManager::add(ISystem* system) { m_systems.push_back(system); }
+void CSystemManager::add(ISystem* system) {
+  spdlog::trace("add system to CSystemManager");
+  m_systems.push_back(system);
+}
 
 /// Remove a system
 void CSystemManager::remove(ISystem* system) {
+  spdlog::trace("remove system to CSystemManager");
   // Search through the entire vector for the system to remove
   m_systems.erase(std::remove(m_systems.begin(), m_systems.end(), system));
 }

@@ -11,9 +11,13 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
+#include <spdlog/spdlog.h>
 #include <vector>
 
 int main() {
+  spdlog::default_logger()->set_level(
+      spdlog::level::trace); // TODO: make this only happen on debug builds
+  spdlog::info("voidengine 0.0.1"); // TODO: make this automated or something
   SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
   Engine engine;

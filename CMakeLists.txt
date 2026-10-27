@@ -18,7 +18,7 @@ else()
   set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 endif()
 
-project(voidEngine)
+project(voidEngine VERSION 0.0.1)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
