@@ -16,14 +16,15 @@
   in {
     devShells.${system}.default = pkgs.mkShell.override {stdenv = pkgs.clangStdenv;} {
       packages = with pkgs; [
-	lldb
-	cmake
-	ninja
-	pkg-config
-	sdl3
-	sdl3-image
+	lldb # clang debugger because why not
+	cmake # spawn of satan
+	ninja # google thing
+	pkg-config # its obvious
+	sdl3 # abstraction to handle user stuff
+	sdl3-image # image
 	luau # This doesn't even have a dev package, shit!
 	python3 # for luau build
+	spdlog # logging
 	# upstream imgui package is outdated,
 	# TODO bug maintainer to update or do it yourself
 	# (imgui.override {

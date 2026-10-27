@@ -3,9 +3,9 @@
     {
       "name": "imgui",
       "features": [
-        "sdl3-binding",
-        "sdl3-renderer-binding",
-        "docking-experimental"
+	"sdl3-binding",
+	"sdl3-renderer-binding",
+	"docking-experimental"
       ]
     },
     "luau",
@@ -13,8 +13,9 @@
     {
       "name": "sdl3-image",
       "features": [
-        "png"
+	"png"
       ]
-    }
+    },
+    "spdlog"
   ]
 }

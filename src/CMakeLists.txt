@@ -25,6 +25,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   target_compile_options(${PROJECT_NAME} PRIVATE -Wno-c23-extensions)
 endif()
 
+find_package(spdlog CONFIG REQUIRED) # logging library
 if (WIN32)
   target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3-static
@@ -35,9 +36,9 @@ if (WIN32)
     unofficial::luau::Luau.Compiler
     SDL3_image::SDL3_image-static
     imgui::imgui
+    spdlog::spdlog
   )
 else()
-
   target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3
     Luau.VM
@@ -47,6 +48,7 @@ else()
     Luau.Compiler
     SDL3_image::SDL3_image
     imgui
+    spdlog::spdlog
   )
 endif()
 
