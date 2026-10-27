@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "gui.h"
+#include "system.h"
 #include "world.h"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
@@ -65,6 +66,8 @@ Engine::Engine() {
 
   world = std::make_unique<World>();
 
+  systems = std::make_unique<CSystemManager>(this, world.get());
+
   initialized = true;
 }
 
@@ -78,3 +81,6 @@ Engine::~Engine() {
     SDL_DestroyWindow(window);
   SDL_Quit();
 }
+
+void Engine::tick() { systems->tick(); }
+void Engine::draw() {}

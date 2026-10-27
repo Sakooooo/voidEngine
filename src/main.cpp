@@ -22,7 +22,15 @@ int main() {
     return 1;
 
   auto entity = engine.world->create_entity();
-  engine.world->add_component<Transform2D>(entity, Transform2D{.pos=Vector2{.x=0.0f, .y=0.0f}, .width=100.0f, .height=100.0f});
+  engine.world->add_component<Transform2D>(
+      entity,
+      Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
+		  .width = 100.0f,
+		  .height = 100.0f});
+
+  // TestSystem mySystem{};
+
+  // engine.systems->add(&mySystem);
 
   Uint64 NOW = SDL_GetPerformanceCounter();
   Uint64 LAST = 0;
@@ -47,6 +55,8 @@ int main() {
 	  running = false;
       }
     }
+
+    engine.tick();
 
     SDL_SetRenderDrawColor(engine.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(engine.renderer);

@@ -14,8 +14,11 @@
 #include <unordered_map>
 #include <vector>
 
+/// Store entities as a regular integer
 using Entity = std::uint32_t;
 
+/// Concept to be used for checking if they're components or not (derived from
+/// Component)
 template <typename ComponentType>
 concept ComponentConcept = std::derived_from<ComponentType, Component>;
 

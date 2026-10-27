@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "system.h"
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
@@ -17,6 +18,7 @@ public:
   const bool* keyboard_state{SDL_GetKeyboardState(nullptr)};
 
   std::unique_ptr<World> world;
+  std::unique_ptr<CSystemManager> systems;
 
   bool initialized{false};
   lua_State* lua{nullptr};
@@ -28,6 +30,9 @@ public:
   Engine& operator=(const Engine&) = delete;
   Engine(Engine&&) = delete;
   Engine& operator=(Engine&&) = delete;
+
+  void tick();
+  void draw();
 };
 
 #endif
