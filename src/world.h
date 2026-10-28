@@ -135,6 +135,25 @@ public:
   /// Return the list of all entities
   const std::vector<Entity>& all_entities() const { return m_entities; }
 
+  /// Get all the components NAMES that an entity has as a std::vector of
+  /// std::string
+  std::vector<std::string> get_all_component_names(Entity entity) {
+    auto it = std::find(m_entities.begin(), m_entities.end(), entity);
+    assert(it != m_entities.end() && "Entity does not exist");
+    assert(m_entity_alive[entity] && "Entity is not alive!");
+
+    std::vector<std::string> result_components;
+
+    for (auto& it : m_storages) {
+      if (it.second->has(entity)) {
+	std::string name = std::string(it.first.name());
+	result_components.push_back(name);
+      }
+    }
+
+    return result_components;
+  }
+
   /// Get a specific component of a specific entity
   template <ComponentConcept ComponentType>
   ComponentType& get_component(Entity entity) {

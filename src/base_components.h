@@ -3,9 +3,12 @@
 #ifndef BASE_COMPONENTS_H
 #define BASE_COMPONENTS_H
 #include "types.h"
+#include <string>
 
 /// The base component struct, you should NOT be using this as its own!
-struct Component {};
+struct Component {
+  std::string name;
+};
 
 /// A component that describes the Transformations of a 2D object
 struct Transform2D : public Component {
