@@ -9,7 +9,7 @@ void TreeGui::render(Engine* engine, World* world) {
   if (ImGui::TreeNodeEx("Entities", ImGuiTreeNodeFlags_DefaultOpen)) {
     for (auto entity : world->all_entities()) {
       ImGui::PushID(entity);
-      if (ImGui::TreeNode(std::to_string(entity).c_str(),
+      if (ImGui::TreeNodeEx(std::to_string(entity).c_str(),
 			  ImGuiTreeNodeFlags_Leaf)) // leaf because i
 						    // haven't added
 						    // component hierachies
@@ -18,8 +18,8 @@ void TreeGui::render(Engine* engine, World* world) {
 	  ImGui::BulletText("%s", component.c_str());
 	}
       ImGui::TreePop();
+      ImGui::PopID();
     }
-    ImGuiL::PopID();
   }
   ImGui::TreePop();
 

@@ -33,6 +33,17 @@ int main() {
 		  .width = 100.0f,
 		  .height = 100.0f});
 
+    auto entity2 = engine.world->create_entity();
+    engine.world->add_component<Transform2D>(
+	entity2,
+	Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
+		    .width = 100.0f,
+		    .height = 100.0f});
+  engine.world->add_component<Color>(
+				     entity2, Color {
+    .r=255, .g=255, .b=255, .a=255
+  });
+
   TestGui test_gui;
   engine.gui_manager->add_gui(&test_gui);
 
