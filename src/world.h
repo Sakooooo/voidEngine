@@ -189,8 +189,7 @@ public:
   template <ComponentConcept... Components>
   void remove_componet(Entity entity) {
     spdlog::trace("remove_component");
-    if ((has_component<Components>(entity) && ...))
-      (get_storage_array<Components>().remove(entity), ...);
+    (get_storage_array<Components>().remove(entity), ...);
   }
 
 private:
