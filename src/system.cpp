@@ -22,8 +22,7 @@ void CSystemManager::add(ISystem* system) {
 /// Remove a system
 void CSystemManager::remove(ISystem* system) {
   spdlog::trace("remove system to CSystemManager");
-  // Search through the entire vector for the system to remove
-  m_systems.erase(std::remove(m_systems.begin(), m_systems.end(), system));
+  std::erase(m_systems, system);
 }
 
 // void TestSystem::tick(Engine* engine, World* world) { printf("I'm ticking!");

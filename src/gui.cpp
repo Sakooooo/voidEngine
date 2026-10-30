@@ -54,6 +54,5 @@ void CGuiManager::end() {
 void CGuiManager::add_gui(IGui* gui) { m_guis.push_back(gui); }
 
 void CGuiManager::remove_gui(IGui* gui) {
-  // Search through the entire vector for the system to remove
-  m_guis.erase(std::remove(m_guis.begin(), m_guis.end(), gui));
+  std::erase(m_guis, gui);
 }
