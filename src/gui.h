@@ -26,6 +26,7 @@ public:
 class CGuiManager {
 public:
   CGuiManager(Engine* engine, World* world);
+  ~CGuiManager();
 
   ImGuiIO* io{nullptr};
   Engine* engine;

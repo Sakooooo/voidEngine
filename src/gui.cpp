@@ -23,6 +23,13 @@ CGuiManager::CGuiManager(Engine* engine, World* world) {
   ImGui_ImplSDLRenderer3_Init(engine->renderer);
 }
 
+CGuiManager::~CGuiManager() {
+  spdlog::info("Destroying CGuiManager");
+  ImGui_ImplSDLRenderer3_Shutdown();
+  ImGui_ImplSDL3_Shutdown();
+  ImGui::DestroyContext();
+}
+
 void CGuiManager::event(SDL_Event* event) {
   ImGui_ImplSDL3_ProcessEvent(event);
 }

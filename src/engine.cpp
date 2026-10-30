@@ -84,6 +84,7 @@ Engine::Engine() {
 
 Engine::~Engine() {
   spdlog::info("Destroying engine...");
+  gui_manager.reset();
   if (lua)
     lua_close(lua);
   if (renderer)
