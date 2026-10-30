@@ -21,7 +21,10 @@ using Entity = std::uint32_t;
 /// Concept to be used for checking if they're components or not (derived from
 /// Component)
 template <typename ComponentType>
-concept ComponentConcept = std::derived_from<ComponentType, Component>;
+concept ComponentConcept =
+    std::derived_from<ComponentType, Component> && requires {
+      { ComponentType::name } -> std::convertible_to<std::string_view>;
+    };
 
 /// Class that is used by Storage to be able to store component stores in single
 /// containers like std::vector
@@ -30,6 +33,7 @@ public:
   virtual ~IStorage() = default;
   virtual void remove(Entity entity) = 0;
   virtual bool has(Entity entity) const = 0;
+  virtual std::string_view name() const = 0;
 };
 
 /// Stores all components for entities of type ComponentType that matches the
@@ -55,7 +59,9 @@ public:
   }
 
   /// Remove an entity from the Storage
-  void remove(Entity entity) { m_storage.erase(entity); }
+  void remove(Entity entity) override { m_storage.erase(entity); }
+
+  std::string_view name() const override { return ComponentType::name; }
 
   /// Returns reference to Storage's internal m_storage
   std::unordered_map<Entity, ComponentType>& all() { return m_storage; }
@@ -150,8 +156,7 @@ public:
 
     for (auto& it : m_storages) {
       if (it.second->has(entity)) {
-	std::string name = std::string(it.first.name());
-	result_components.push_back(name);
+	result_components.emplace_back(it.second->name());
       }
     }
 
