@@ -91,6 +91,10 @@ public:
   /// m_free list for later reuse
   void destroy_entity(Entity entity) {
     spdlog::trace("Destroying entity");
+    if (!m_entity_alive[entity]) {
+      spdlog::trace("Entity is already dead");
+      return;
+    }
     for (auto& [typeIndex, array] : m_storages) {
       spdlog::trace("removing entity from stores");
       array->remove(entity);
