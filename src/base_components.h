@@ -3,7 +3,7 @@
 #ifndef BASE_COMPONENTS_H
 #define BASE_COMPONENTS_H
 #include "types.h"
-#include <string>
+#include <string_view>
 
 /// The base component struct, you should NOT be using this as its own!
 struct Component {

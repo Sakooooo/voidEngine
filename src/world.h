@@ -5,12 +5,15 @@
 #include "engine.h"
 #include "types.h"
 #include <SDL3/SDL_render.h>
+#include <algorithm>
 #include <cassert>
 #include <concepts>
 #include <cstdint>
 #include <cstdio>
 #include <memory>
 #include <spdlog/spdlog.h>
+#include <string>
+#include <string_view>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
