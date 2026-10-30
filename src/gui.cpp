@@ -43,11 +43,6 @@ void CGuiManager::begin() {
 void CGuiManager::render() {
   // iterate through every stored gui in m_guis
   for (auto& gui : m_guis) {
-    // check if it's been freed
-    if (!gui) {
-      continue;
-    }
-
     gui->render(engine, world);
   }
 
