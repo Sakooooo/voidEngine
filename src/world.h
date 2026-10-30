@@ -100,7 +100,7 @@ public:
   /// m_free list for later reuse
   void destroy_entity(Entity entity) {
     spdlog::trace("Destroying entity");
-    if (!m_entity_alive[entity]) {
+    if (!is_alive(entity)) {
       spdlog::trace("Entity is already dead");
       return;
     }
@@ -119,7 +119,9 @@ public:
     m_free.push_back(entity);
   }
 
-  bool is_alive(Entity entity) { return m_entity_alive[entity]; }
+  bool is_alive(Entity entity) const {
+    return entity < m_entity_alive.size() && m_entity_alive[entity];
+  }
 
   /// Create or get the Storage of ComponentType
   template <ComponentConcept ComponentType>
