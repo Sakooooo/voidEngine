@@ -50,7 +50,7 @@ public:
   }
 
   /// Check if the Storage contains the Entity
-  bool has(Entity entity) const {
+  bool has(Entity entity) const override {
     return m_storage.find(entity) != m_storage.end();
   }
 
