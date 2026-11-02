@@ -39,10 +39,8 @@ struct View2D {
 
   /// Return the position of another object relative to the View2D
   Vector2 to_screen(Vector2 other) const {
-    return {
-      (other.x - center.x) * zoom + screen_center.x,
-      (other.y - center.y) * zoom + screen_center.y
-    };
+    return {(other.x - center.x) * zoom + screen_center.x,
+            (other.y - center.y) * zoom + screen_center.y};
   }
 };
 

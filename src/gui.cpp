@@ -55,6 +55,4 @@ void CGuiManager::end() {
 
 void CGuiManager::add_gui(IGui* gui) { m_guis.push_back(gui); }
 
-void CGuiManager::remove_gui(IGui* gui) {
-  std::erase(m_guis, gui);
-}
+void CGuiManager::remove_gui(IGui* gui) { std::erase(m_guis, gui); }

@@ -3,9 +3,9 @@
 #include "engine.h"
 #include "types.h"
 #include "world.h"
-#include <string_view>
-#include <optional>
 #include <SDL3/SDL_rect.h>
+#include <optional>
+#include <string_view>
 
 struct Camera2D : public Component {
   static constexpr std::string_view name = "Camera2D";
@@ -15,7 +15,7 @@ struct Camera2D : public Component {
 };
 
 class CCamera2DSystem : public ISystem {
-  void tick(Engine* engine, World* world, double deltaTime) override{};
+  void tick(Engine* engine, World* world, double deltaTime) override {};
   void late_tick(Engine* engine, World* world, double deltaTime) override;
   void draw(Engine* engine, World* world) override {};
 };

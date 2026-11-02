@@ -5,15 +5,15 @@
 
 void CRectSystem::draw(Engine* engine, World* world) {
   world->each<Rect, Color, Transform2D>([engine](Entity entity, Rect& rectangle,
-						 Color& color,
-						 Transform2D& transform) {
+                                                 Color& color,
+                                                 Transform2D& transform) {
     const View2D& view = engine->view;
     SDL_FRect rect = to_view_FRect(view, transform);
 
     SDL_SetRenderDrawColor(engine->renderer, static_cast<Uint8>(color.r),
-			   static_cast<Uint8>(color.g),
-			   static_cast<Uint8>(color.b),
-			   static_cast<Uint8>(color.a));
+                           static_cast<Uint8>(color.g),
+                           static_cast<Uint8>(color.b),
+                           static_cast<Uint8>(color.a));
     SDL_RenderFillRect(engine->renderer, &rect);
   });
 }

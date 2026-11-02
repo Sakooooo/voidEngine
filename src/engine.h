@@ -1,8 +1,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "types.h"
 #include "system.h"
+#include "types.h"
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>

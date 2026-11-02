@@ -22,7 +22,8 @@ public:
   // Then have a list of systems that haven't ticked and possibly cause it to
   // check if that system has ticked before running every frame, but that might
   // be too slow and will cause it to be slow as shit
-  // Maybe I'll stick to this? Not sure either way since it isn't a priority right now
+  // Maybe I'll stick to this? Not sure either way since it isn't a priority
+  // right now
   //
   /// Tick as soon as possible
   virtual void tick(Engine* engine, World* world, double deltaTime) = 0;
