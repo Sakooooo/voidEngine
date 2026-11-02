@@ -15,6 +15,9 @@ struct Transform2D : public Component {
   Vector2 pos;
   float width;
   float height;
+
+  /// Return a vector of the calculated center of the Transform2D
+Vector2 center() const { return {pos.x + width / 2, pos.y + height / 2}; }
 };
 
 /// A component that describes the Color of a 2D/3D object
