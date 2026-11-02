@@ -21,6 +21,17 @@
 /// Store entities as a regular integer
 using Entity = std::uint32_t;
 
+/// A "reference" that stores the generation and the ID of the Entity to hold a
+/// "reference" for validation I only say "reference" because this isn't a
+/// fucking reference it's just a struct that holds the id with an extra value
+/// AGAIN!
+/// This should be used when you need to make sure that an entity is still alive
+/// to prevent unexpected behavior!
+struct EntityReference {
+  Entity entity;
+  std::uint32_t generation;
+};
+
 /// Concept to be used for checking if they're components or not (derived from
 /// Component)
 template <typename ComponentType>
@@ -91,9 +102,23 @@ public:
     m_entities.push_back(id);
     if (id >= m_entity_alive.size()) {
       m_entity_alive.resize(id + 1);
+      m_generation.resize(id + 1);
     }
     m_entity_alive[id] = true;
     return id;
+  }
+
+  /// Creates a reference to an entity with the Entity's current generation.
+  /// This should be used when you need to make sure that an entity is still
+  /// alive to prevent unexpected behavior!
+  EntityReference make_ref(Entity entity) const {
+    assert(is_alive(entity) && "Cannot reference a dead entity");
+    return {entity, m_generation[entity]};
+  };
+
+  /// Check if an EntityReference is valid
+  bool is_valid(EntityReference ref) const {
+    return is_alive(ref.entity) && m_generation[ref.entity] == ref.generation;
   }
 
   /// Destroy an entity, removing it from all Storages and adding it to the
@@ -116,6 +141,7 @@ public:
       }
     }
     m_entity_alive[entity] = false;
+    ++m_generation[entity];
     m_free.push_back(entity);
   }
 
@@ -199,6 +225,8 @@ private:
   std::vector<Entity> m_entities{};
   std::vector<bool> m_entity_alive{};
   std::vector<Entity> m_free{};
+  /// A list that holds the generation of every entity (dead or alive)
+  std::vector<std::uint32_t> m_generation{};
   /// List of all Components and their respective Storages
   std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
 };
