@@ -12,10 +12,12 @@ class ISystem {
 public:
   virtual ~ISystem() = default;
   virtual void tick(Engine* engine, World* world, double deltaTime) = 0;
+  virtual void draw(Engine* engine, World* world) = 0;
 };
 
 // class TestSystem : public ISystem {
-//   void tick(Engine* engine, World* world) override;
+//   void tick(Engine* engine, World* world, double deltaTime) override;
+//   void draw(Engine* engine, World* world) override;
 // };
 
 /// A class that handles management of all systems
@@ -31,6 +33,7 @@ public:
   void remove(ISystem* system);
 
   void tick(double deltaTime);
+  void draw();
 
 private:
   /// Private vector store that holds pointers to all currently loaded systems

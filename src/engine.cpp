@@ -97,4 +97,4 @@ Engine::~Engine() {
 }
 
 void Engine::tick(double deltaTime) { systems->tick(deltaTime); }
-void Engine::draw() {}
+void Engine::draw() { systems->draw(); }

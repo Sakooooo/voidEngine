@@ -13,6 +13,12 @@ void CSystemManager::tick(double deltaTime) {
   }
 }
 
+void CSystemManager::draw() {
+  for (auto& system : m_systems) {
+    system->draw(engine, world);
+  }
+}
+
 /// Add a system
 void CSystemManager::add(ISystem* system) {
   spdlog::trace("add system to CSystemManager");
@@ -25,5 +31,8 @@ void CSystemManager::remove(ISystem* system) {
   std::erase(m_systems, system);
 }
 
-// void TestSystem::tick(Engine* engine, World* world) { printf("I'm ticking!");
+// void TestSystem::tick(Engine* engine, World* world, double deltaTime) {
+//   printf("I'm ticking!");
 // };
+
+// void TestSystem::draw(Engine* engine, World* world) { printf("draw"); }
