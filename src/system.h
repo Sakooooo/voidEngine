@@ -11,7 +11,23 @@ class World;
 class ISystem {
 public:
   virtual ~ISystem() = default;
+
+  // these should be kept as 0 because it'll be more clear when systems don't do
+  // a specific kind of thing "self-documenting" :D
+
+  // TODO: I want to replace this with a dependencies kind of ticking
+  //
+  // #-
+  // Probably add a depends on vector?
+  // Then have a list of systems that haven't ticked and possibly cause it to
+  // check if that system has ticked before running every frame, but that might
+  // be too slow and will cause it to be slow as shit
+  // Maybe I'll stick to this? Not sure either way since it isn't a priority right now
+  //
+  /// Tick as soon as possible
   virtual void tick(Engine* engine, World* world, double deltaTime) = 0;
+  /// Tick once early ticks have passed
+  virtual void late_tick(Engine* engine, World* world, double deltaTime) = 0;
   virtual void draw(Engine* engine, World* world) = 0;
 };
 

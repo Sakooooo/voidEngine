@@ -10,6 +10,7 @@ struct PlayerController : public Component {
 
 class CPlayerControllerSystem : public ISystem {
   void tick(Engine* engine, World* world, double deltaTime) override;
+  void late_tick(Engine* engine, World* world, double deltaTime) override {};
   void draw(Engine* engine, World* world) override {};
 };
 

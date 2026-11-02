@@ -11,6 +11,9 @@ void CSystemManager::tick(double deltaTime) {
   for (auto& system : m_systems) {
     system->tick(engine, world, deltaTime);
   }
+  for (auto& system : m_systems) {
+    system->late_tick(engine, world, deltaTime);
+  }
 }
 
 void CSystemManager::draw() {
