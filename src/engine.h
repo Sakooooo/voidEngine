@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "types.h"
 #include "system.h"
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_render.h>
@@ -22,6 +23,8 @@ public:
   std::unique_ptr<World> world;
   std::unique_ptr<CSystemManager> systems;
   std::unique_ptr<CGuiManager> gui_manager;
+
+  View2D view;
 
   bool initialized{false};
   lua_State* lua{nullptr};

@@ -31,4 +31,19 @@ struct Vector2 {
   };
 };
 
+/// A global 2D view, used when in 2D and adjusts to the Camera2D
+struct View2D {
+  Vector2 center{0, 0};
+  Vector2 screen_center{0, 0};
+  float zoom{1.0f};
+
+  /// Return the position of another object relative to the View2D
+  Vector2 to_screen(Vector2 other) const {
+    return {
+      (other.x - center.x) * zoom + screen_center.x,
+      (other.y - center.y) * zoom + screen_center.y
+    };
+  }
+};
+
 #endif
