@@ -9,7 +9,6 @@ set(SOURCES
   gui.cpp
   ${GUI_SOURCES}
   world.cpp
-  mind.cpp
   script.cpp
   camera.cpp
   system.cpp

@@ -2,7 +2,6 @@
 #include "engine.h"
 #include "gui.h"
 #include "guis/guis.h"
-#include "mind.h"
 #include "script.h"
 #include "world.h"
 #include <SDL3/SDL.h>
