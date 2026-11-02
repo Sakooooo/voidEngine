@@ -6,6 +6,7 @@
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_iostream.h>
 #include <SDL3/SDL_log.h>
+#include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstddef>
 #include <cstdio>
@@ -35,6 +36,7 @@ Engine::Engine() {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
+  SDL_SetRenderVSync(renderer, 1); // TODO: customiztable option
   spdlog::trace("ok");
 
   // set app icon
