@@ -12,6 +12,7 @@ set(SOURCES
   script.cpp
   camera.cpp
   system.cpp
+  player_controller.cpp
   rectangle.cpp
 )
 

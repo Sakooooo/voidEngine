@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "gui.h"
 #include "guis/guis.h"
+#include "player_controller.h"
 #include "rectangle.h"
 #include "script.h"
 #include "world.h"
@@ -32,6 +33,7 @@ int main() {
       Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
 		  .width = 100.0f,
 		  .height = 100.0f});
+  engine.world->add_component<PlayerController>(entity, PlayerController{});
   engine.world->add_component<Color>(entity,
 				     Color{.r = 255, .g = 0, .b = 0, .a = 255});
   engine.world->add_component<Rect>(entity, Rect{});
@@ -54,6 +56,9 @@ int main() {
   // TestSystem mySystem{};
 
   // engine.systems->add(&mySystem);
+
+  CPlayerControllerSystem controller_system{};
+  engine.systems->add(&controller_system);
 
   CRectSystem rectangle_system{};
   engine.systems->add(&rectangle_system);
