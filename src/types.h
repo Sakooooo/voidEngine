@@ -23,7 +23,7 @@ struct Vector2 {
   }
 
   void normalize() {
-    if (x == 0 | y == 0)
+    if (x == 0 && y == 0)
       return;
     auto distance = std::sqrt((std::pow(x, 2) + std::pow(y, 2)));
     x = x / distance;
