@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "gui.h"
 #include "guis/guis.h"
+#include "rectangle.h"
 #include "script.h"
 #include "world.h"
 #include <SDL3/SDL.h>
@@ -31,15 +32,18 @@ int main() {
       Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
 		  .width = 100.0f,
 		  .height = 100.0f});
+  engine.world->add_component<Color>(entity,
+				     Color{.r = 255, .g = 0, .b = 0, .a = 255});
+  engine.world->add_component<Rect>(entity, Rect{});
 
   auto entity2 = engine.world->create_entity();
   engine.world->add_component<Transform2D>(
       entity2,
-      Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
+      Transform2D{.pos = Vector2{.x = 400.0f, .y = 600.0f},
 		  .width = 100.0f,
 		  .height = 100.0f});
-  engine.world->add_component<Color>(
-      entity2, Color{.r = 255, .g = 255, .b = 255, .a = 255});
+  engine.world->add_component<Color>(entity2,
+				     Color{.r = 255, .g = 0, .b = 0, .a = 255});
 
   TestGui test_gui;
   engine.gui_manager->add_gui(&test_gui);
@@ -50,6 +54,9 @@ int main() {
   // TestSystem mySystem{};
 
   // engine.systems->add(&mySystem);
+
+  CRectSystem rectangle_system{};
+  engine.systems->add(&rectangle_system);
 
   Uint64 NOW = SDL_GetPerformanceCounter();
   Uint64 LAST = 0;

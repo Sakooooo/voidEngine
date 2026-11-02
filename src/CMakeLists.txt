@@ -12,6 +12,7 @@ set(SOURCES
   script.cpp
   camera.cpp
   system.cpp
+  rectangle.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
