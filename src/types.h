@@ -2,11 +2,13 @@
 #define TYPES_H
 
 #include <cmath>
+#include <concepts>
 #include <type_traits>
 
 template <typename T>
 concept NumberConcept = std::integral<T> or std::floating_point<T>;
 
+/// A 2D vector.
 struct Vector2 {
   float x, y;
 
