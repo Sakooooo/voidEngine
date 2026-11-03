@@ -1,5 +1,5 @@
 set(GUI_SOURCES
-  guis/test.cpp
+  guis/debug.cpp
   guis/tree.cpp
 )
 

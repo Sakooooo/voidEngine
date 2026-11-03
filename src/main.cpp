@@ -53,8 +53,8 @@ int main() {
       entity2, Color{.r = 255, .g = 255, .b = 0, .a = 255});
   engine.world->add_component<Rect>(entity2, Rect{});
 
-  TestGui test_gui;
-  engine.gui_manager->add_gui(&test_gui);
+  DebugGui debug_gui;
+  engine.gui_manager->add_gui(&debug_gui);
 
   TreeGui tree_gui;
   engine.gui_manager->add_gui(&tree_gui);

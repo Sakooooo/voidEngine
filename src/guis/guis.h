@@ -6,10 +6,19 @@
 #include "imgui.h"
 #define GUIS_H
 
-class TestGui : public IGui {
+#include <array>
+
+class DebugGui : public IGui {
 public:
-  TestGui() : IGui() {};
+  DebugGui() : IGui() {};
   void render(Engine* engine, World* world) override;
+
+private:
+  /// Ring buffer of the last frame times in milliseconds
+  std::array<float, 120> m_frame_times{};
+  std::size_t m_frame_offset{0};
+  bool m_show_demo{false};
+  bool m_show_metrics{false};
 };
 
 class TreeGui : public IGui {
