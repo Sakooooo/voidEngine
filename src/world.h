@@ -137,9 +137,9 @@ public:
     }
     for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
       if (*it == entity) {
-        spdlog::trace("erase entity");
-        m_entities.erase(it);
-        break;
+	spdlog::trace("erase entity");
+	m_entities.erase(it);
+	break;
       }
     }
     m_entity_alive[entity] = false;
@@ -175,6 +175,15 @@ public:
     return get_storage_array<ComponentType>().has(entity);
   }
 
+/// Check if an Entity has a component from a string, (used by the lua helper)
+  bool has_component_by_name(std::string_view name, Entity entity) {
+    for (auto& [_, storage] : m_storages) {
+      if (storage->name() == name)
+	return storage->has(entity);
+    }
+    return false;
+  }
+
   /// Return the list of all entities
   const std::vector<Entity>& all_entities() const { return m_entities; }
 
@@ -189,7 +198,7 @@ public:
 
     for (auto& it : m_storages) {
       if (it.second->has(entity)) {
-        result_components.emplace_back(it.second->name());
+	result_components.emplace_back(it.second->name());
       }
     }
 
@@ -209,7 +218,7 @@ public:
     for (Entity entity : m_entities) {
       bool hasAll = (has_component<Components>(entity) && ...);
       if (hasAll) {
-        func(entity, get_component<Components>(entity)...);
+	func(entity, get_component<Components>(entity)...);
       }
     }
   }
@@ -231,6 +240,10 @@ private:
   std::vector<std::uint32_t> m_generation{};
   /// List of all Components and their respective Storages
   std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
+};
+
+namespace lua {
+  int has(lua_State* L);
 };
 
 } // namespace World

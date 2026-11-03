@@ -34,7 +34,7 @@ CEngine::CEngine() {
 
   spdlog::trace("sdl renderer and window");
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
-                                   &window, &renderer)) {
+				   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
@@ -74,6 +74,9 @@ CEngine::CEngine() {
   lua_setglobal(lua, "myFunction");
 
   luaL_openlibs(lua);
+
+  spdlog::trace("add engine pointer to luau threaddata");
+  lua_setthreaddata(lua, this);
 
   spdlog::trace("do CWorld constructor");
   world = std::make_unique<World::CWorld>();
