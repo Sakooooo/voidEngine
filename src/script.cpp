@@ -76,12 +76,14 @@ void CLuauScriptSystem::tick(Engine* engine, World* world, double deltaTime) {
   world->each<LuauScript>([&](Entity entity, LuauScript& script) {
     auto it = m_instances.find(entity);
     if (it != m_instances.end() &&
-	(!world->is_valid(it->second.ref) || it->second.path != script.path)) {
+	(!world->is_valid(it->second.ref) || it->second.path != script.path ||
+	 script.reload)) {
       // discard
       lua_unref(L, it->second.environment_ref);
       m_instances.erase(it);
       it = m_instances.end();
     }
+    script.reload = false;
     if (it == m_instances.end()) {
       CLuauScriptSystem::ScriptInstance instance{};
       instance.ref = world->make_ref(entity);

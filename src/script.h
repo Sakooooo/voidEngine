@@ -9,6 +9,7 @@
 struct LuauScript : public Component {
   static constexpr std::string_view name = "LuauScript";
   std::string path;
+  bool reload{false};
 };
 
 class CLuauScriptSystem : public ISystem {
