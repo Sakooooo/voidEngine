@@ -60,7 +60,7 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   int status = luau_load(L, chunk.c_str(), bytecode, bytecode_length, -1);
   free(bytecode); // no need for this anymore
   if (status != 0 || lua_pcall(L, 0, 0, 0) != 0) {
-    spdlog::error("lua error {}: {}", full_path,
+    spdlog::error("luau error {}: {}", full_path,
 		  luaL_tolstring(L, -1, nullptr));
     lua_pop(L, 3);
     return false;
