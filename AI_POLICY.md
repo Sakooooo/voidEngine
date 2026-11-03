@@ -4,6 +4,7 @@
 - You **__must__** disclose AI usage
 - You must fully understand the changes the AI does.
 - No AI generated media is allowed. Only text and code are allowed in *specific* cases.
+- Do not generate Pull requests, Issues or documentation with AI.
 
 The only commits contain AI usage are:
 - 74643ff99f79d72bd5a46b86bf04b91a9da8b9fe
