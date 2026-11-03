@@ -8,8 +8,8 @@
 #include <spdlog/spdlog.h>
 
 bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
-				    const std::string& path,
-				    int& environment_ref) {
+                                    const std::string& path,
+                                    int& environment_ref) {
 
   const char* base_path = SDL_GetBasePath();
   if (!base_path) {
@@ -40,7 +40,7 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   }
   if (bytecode_length > 0 && bytecode[0] == 0) {
     spdlog::error("failed to compile {}{}", path,
-		  std::string_view(bytecode + 1, bytecode_length - 1));
+                  std::string_view(bytecode + 1, bytecode_length - 1));
     free(bytecode);
     return false;
   }
@@ -61,7 +61,7 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   free(bytecode); // no need for this anymore
   if (status != 0 || lua_pcall(L, 0, 0, 0) != 0) {
     spdlog::error("luau error {}: {}", full_path,
-		  luaL_tolstring(L, -1, nullptr));
+                  luaL_tolstring(L, -1, nullptr));
     lua_pop(L, 3);
     return false;
   }
@@ -71,13 +71,14 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   return true;
 };
 
-void CLuauScriptSystem::tick(Engine* engine, World* world, double deltaTime) {
+void CLuauScriptSystem::tick(Engine::CEngine* engine, World* world,
+                             double deltaTime) {
   lua_State* L = engine->lua;
   world->each<LuauScript>([&](Entity entity, LuauScript& script) {
     auto it = m_instances.find(entity);
     if (it != m_instances.end() &&
-	(!world->is_valid(it->second.ref) || it->second.path != script.path ||
-	 script.reload)) {
+        (!world->is_valid(it->second.ref) || it->second.path != script.path ||
+         script.reload)) {
       // discard
       lua_unref(L, it->second.environment_ref);
       m_instances.erase(it);
@@ -89,7 +90,7 @@ void CLuauScriptSystem::tick(Engine* engine, World* world, double deltaTime) {
       instance.ref = world->make_ref(entity);
       instance.path = script.path;
       instance.failed =
-	  !load_script(L, entity, script.path, instance.environment_ref);
+          !load_script(L, entity, script.path, instance.environment_ref);
       it = m_instances.emplace(entity, instance).first;
     }
     if (it->second.failed)
@@ -110,10 +111,10 @@ void CLuauScriptSystem::tick(Engine* engine, World* world, double deltaTime) {
       lua_pushnumber(L, deltaTime);
       if (lua_pcall(L, 2, 0, 0) != 0) {
 
-	spdlog::error("lua error {}: {}", script.path,
-		      luaL_tolstring(L, -1, nullptr));
-	lua_pop(L, 2);
-	it->second.failed = true;
+        spdlog::error("lua error {}: {}", script.path,
+                      luaL_tolstring(L, -1, nullptr));
+        lua_pop(L, 2);
+        it->second.failed = true;
       }
     } else {
       lua_pop(L, 1);
@@ -123,7 +124,7 @@ void CLuauScriptSystem::tick(Engine* engine, World* world, double deltaTime) {
 
   std::erase_if(m_instances, [&](auto& instance) {
     if (world->is_valid(instance.second.ref) &&
-	world->has_component<LuauScript>(instance.first))
+        world->has_component<LuauScript>(instance.first))
       return false;
     lua_unref(L, instance.second.environment_ref);
     return true;

@@ -288,7 +288,7 @@ static void render_entity(World* world, Entity entity,
   ImGui::PopID();
 }
 
-void TreeGui::render(Engine* engine, World* world) {
+void TreeGui::render(Engine::CEngine* engine, World* world) {
   static ImGuiTextFilter filter;
   DeferredActions deferred;
 

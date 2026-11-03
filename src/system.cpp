@@ -1,7 +1,7 @@
 #include "system.h"
 #include <spdlog/spdlog.h>
 
-CSystemManager::CSystemManager(Engine* engine, World* world) {
+CSystemManager::CSystemManager(Engine::CEngine* engine, World* world) {
   spdlog::trace("constructing CSystemManager");
   this->engine = engine;
   this->world = world;
@@ -34,8 +34,10 @@ void CSystemManager::remove(ISystem* system) {
   std::erase(m_systems, system);
 }
 
-// void TestSystem::tick(Engine* engine, World* world, double deltaTime) {
+// void TestSystem::tick(Engine::CEngine* engine, World* world, double
+// deltaTime) {
 //   printf("I'm ticking!");
 // };
 
-// void TestSystem::draw(Engine* engine, World* world) { printf("draw"); }
+// void TestSystem::draw(Engine::CEngine* engine, World* world) {
+// printf("draw"); }

@@ -8,7 +8,9 @@
 #include <vector>
 
 // forward decls
-class Engine;
+namespace Engine {
+class CEngine;
+}
 class World;
 
 /// The interface for any GUIs, first derive a new class from IGui, override
@@ -19,17 +21,17 @@ public:
   IGui() { spdlog::trace("Creaitng a new Gui class"); };
 
   /// Render the ImGui GUI
-  virtual void render(Engine* engine, World* world) = 0;
+  virtual void render(Engine::CEngine* engine, World* world) = 0;
 };
 
 /// The main GUI manager class, currently manages ImGui windows for now.
 class CGuiManager {
 public:
-  CGuiManager(Engine* engine, World* world);
+  CGuiManager(Engine::CEngine* engine, World* world);
   ~CGuiManager();
 
   ImGuiIO* io{nullptr};
-  Engine* engine;
+  Engine::CEngine* engine;
   World* world;
 
   /// Add derived IGui class to m_guis

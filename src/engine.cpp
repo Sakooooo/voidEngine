@@ -20,7 +20,9 @@ static int c_function_test(lua_State* L) {
   return 0;
 }
 
-Engine::Engine() {
+namespace Engine {
+
+CEngine::CEngine() {
   spdlog::info("Creating engine...");
 
   spdlog::trace("sdl video init");
@@ -84,7 +86,7 @@ Engine::Engine() {
   spdlog::trace("engine ok");
 }
 
-Engine::~Engine() {
+CEngine::~CEngine() {
   spdlog::info("Destroying engine...");
   gui_manager.reset();
   if (lua)
@@ -96,5 +98,7 @@ Engine::~Engine() {
   SDL_Quit();
 }
 
-void Engine::tick(double deltaTime) { systems->tick(deltaTime); }
-void Engine::draw() { systems->draw(); }
+void CEngine::tick(double deltaTime) { systems->tick(deltaTime); }
+void CEngine::draw() { systems->draw(); }
+
+} // namespace Engine

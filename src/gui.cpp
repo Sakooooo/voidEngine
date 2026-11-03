@@ -3,7 +3,7 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
 
-CGuiManager::CGuiManager(Engine* engine, World* world) {
+CGuiManager::CGuiManager(Engine::CEngine* engine, World* world) {
   spdlog::trace("creating CGuiManager");
   this->engine = engine;
   this->world = world;

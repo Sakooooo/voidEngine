@@ -11,7 +11,7 @@
 class DebugGui : public IGui {
 public:
   DebugGui() : IGui() {};
-  void render(Engine* engine, World* world) override;
+  void render(Engine::CEngine* engine, World* world) override;
 
 private:
   /// Ring buffer of the last frame times in milliseconds
@@ -24,6 +24,6 @@ private:
 class TreeGui : public IGui {
 public:
   TreeGui() : IGui() {};
-  void render(Engine* engine, World* world) override;
+  void render(Engine::CEngine* engine, World* world) override;
 };
 #endif

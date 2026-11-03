@@ -7,7 +7,7 @@
 #include <lua.h>
 #include <spdlog/spdlog.h>
 
-void DebugGui::render(Engine* engine, World* world) {
+void DebugGui::render(Engine::CEngine* engine, World* world) {
   ImGuiIO& io = ImGui::GetIO();
 
   m_frame_times[m_frame_offset] = io.DeltaTime * 1000.0f;

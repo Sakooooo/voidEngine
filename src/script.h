@@ -20,12 +20,13 @@ class CLuauScriptSystem : public ISystem {
     bool failed{false};
   };
   std::unordered_map<Entity, ScriptInstance> m_instances{};
-  void tick(Engine* engine, World* world, double deltaTime) override;
-  void late_tick(Engine* engine, World* world, double deltaTime) override {};
-  void draw(Engine* engine, World* world) override {};
+  void tick(Engine::CEngine* engine, World* world, double deltaTime) override;
+  void late_tick(Engine::CEngine* engine, World* world,
+                 double deltaTime) override {};
+  void draw(Engine::CEngine* engine, World* world) override {};
 
   static bool load_script(lua_State* L, Entity entity, const std::string& path,
-			  int& environment_ref);
+                          int& environment_ref);
 };
 
 #endif

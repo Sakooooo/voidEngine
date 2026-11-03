@@ -1,6 +1,6 @@
 #include "player_controller.h"
 
-void CPlayerControllerSystem::tick(Engine* engine, World* world,
+void CPlayerControllerSystem::tick(Engine::CEngine* engine, World* world,
                                    double deltaTime) {
 
   const bool* keys = engine->keyboard_state;

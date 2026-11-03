@@ -4,7 +4,9 @@
 #include <vector>
 
 // forward defs
-class Engine;
+namespace Engine {
+class CEngine;
+}
 class World;
 
 /// An interface class that is used to define new systems
@@ -26,24 +28,26 @@ public:
   // right now
   //
   /// Tick as soon as possible
-  virtual void tick(Engine* engine, World* world, double deltaTime) = 0;
+  virtual void tick(Engine::CEngine* engine, World* world,
+                    double deltaTime) = 0;
   /// Tick once early ticks have passed
-  virtual void late_tick(Engine* engine, World* world, double deltaTime) = 0;
-  virtual void draw(Engine* engine, World* world) = 0;
+  virtual void late_tick(Engine::CEngine* engine, World* world,
+                         double deltaTime) = 0;
+  virtual void draw(Engine::CEngine* engine, World* world) = 0;
 };
 
 // class TestSystem : public ISystem {
-//   void tick(Engine* engine, World* world, double deltaTime) override;
-//   void draw(Engine* engine, World* world) override;
+//   void tick(Engine::CEngine* engine, World* world, double deltaTime)
+//   override; void draw(Engine::CEngine* engine, World* world) override;
 // };
 
 /// A class that handles management of all systems
 class CSystemManager {
 public:
-  CSystemManager(Engine* engine, World* world);
+  CSystemManager(Engine::CEngine* engine, World* world);
 
   // Construct with engine and world to pass through into tick()
-  Engine* engine;
+  Engine::CEngine* engine;
   World* world;
 
   void add(ISystem* system);

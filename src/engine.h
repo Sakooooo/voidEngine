@@ -13,7 +13,9 @@
 class World;
 class CGuiManager;
 
-class Engine {
+namespace Engine {
+
+class CEngine {
 public:
   // I wonder if this could be an array later
   SDL_Window* window{nullptr};
@@ -29,16 +31,18 @@ public:
   bool initialized{false};
   lua_State* lua{nullptr};
 
-  Engine();
-  ~Engine();
+  CEngine();
+  ~CEngine();
 
-  Engine(const Engine&) = delete;
-  Engine& operator=(const Engine&) = delete;
-  Engine(Engine&&) = delete;
-  Engine& operator=(Engine&&) = delete;
+  CEngine(const CEngine&) = delete;
+  CEngine& operator=(const CEngine&) = delete;
+  CEngine(CEngine&&) = delete;
+  CEngine& operator=(CEngine&&) = delete;
 
   void tick(double deltaTime);
   void draw();
 };
+
+} // namespace Engine
 
 #endif
