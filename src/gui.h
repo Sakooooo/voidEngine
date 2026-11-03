@@ -11,7 +11,9 @@
 namespace Engine {
 class CEngine;
 }
-class World;
+namespace World {
+class CWorld;
+}
 
 /// The interface for any GUIs, first derive a new class from IGui, override
 /// it's render() function with what's need then add it to CGuiManager with
@@ -21,18 +23,18 @@ public:
   IGui() { spdlog::trace("Creaitng a new Gui class"); };
 
   /// Render the ImGui GUI
-  virtual void render(Engine::CEngine* engine, World* world) = 0;
+  virtual void render(Engine::CEngine* engine, World::CWorld* world) = 0;
 };
 
 /// The main GUI manager class, currently manages ImGui windows for now.
 class CGuiManager {
 public:
-  CGuiManager(Engine::CEngine* engine, World* world);
+  CGuiManager(Engine::CEngine* engine, World::CWorld* world);
   ~CGuiManager();
 
   ImGuiIO* io{nullptr};
   Engine::CEngine* engine;
-  World* world;
+  World::CWorld* world;
 
   /// Add derived IGui class to m_guis
   void add_gui(IGui* gui);

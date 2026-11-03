@@ -7,7 +7,9 @@
 namespace Engine {
 class CEngine;
 }
-class World;
+namespace World {
+class CWorld;
+}
 
 /// An interface class that is used to define new systems
 class ISystem {
@@ -28,27 +30,28 @@ public:
   // right now
   //
   /// Tick as soon as possible
-  virtual void tick(Engine::CEngine* engine, World* world,
+  virtual void tick(Engine::CEngine* engine, World::CWorld* world,
                     double deltaTime) = 0;
   /// Tick once early ticks have passed
-  virtual void late_tick(Engine::CEngine* engine, World* world,
+  virtual void late_tick(Engine::CEngine* engine, World::CWorld* world,
                          double deltaTime) = 0;
-  virtual void draw(Engine::CEngine* engine, World* world) = 0;
+  virtual void draw(Engine::CEngine* engine, World::CWorld* world) = 0;
 };
 
 // class TestSystem : public ISystem {
-//   void tick(Engine::CEngine* engine, World* world, double deltaTime)
-//   override; void draw(Engine::CEngine* engine, World* world) override;
+//   void tick(Engine::CEngine* engine, World::CWorld* world, double deltaTime)
+//   override; void draw(Engine::CEngine* engine, World::CWorld* world)
+//   override;
 // };
 
 /// A class that handles management of all systems
 class CSystemManager {
 public:
-  CSystemManager(Engine::CEngine* engine, World* world);
+  CSystemManager(Engine::CEngine* engine, World::CWorld* world);
 
   // Construct with engine and world to pass through into tick()
   Engine::CEngine* engine;
-  World* world;
+  World::CWorld* world;
 
   void add(ISystem* system);
   void remove(ISystem* system);

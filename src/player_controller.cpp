@@ -1,7 +1,7 @@
 #include "player_controller.h"
 
-void CPlayerControllerSystem::tick(Engine::CEngine* engine, World* world,
-                                   double deltaTime) {
+void CPlayerControllerSystem::tick(Engine::CEngine* engine,
+                                   World::CWorld* world, double deltaTime) {
 
   const bool* keys = engine->keyboard_state;
   world->each<Transform2D, PlayerController>(

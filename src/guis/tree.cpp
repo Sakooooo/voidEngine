@@ -14,16 +14,17 @@
 #include <vector>
 
 /// Draws the fields of a component inside its tree node
-using ComponentInspector = std::function<void(World* world, Entity entity)>;
+using ComponentInspector =
+    std::function<void(World::CWorld* world, Entity entity)>;
 
-static void inspect_transform2d(World* world, Entity entity) {
+static void inspect_transform2d(World::CWorld* world, Entity entity) {
   auto& transform = world->get_component<Transform2D>(entity);
   ImGui::DragFloat2("pos", &transform.pos.x);
   ImGui::DragFloat("width", &transform.width, 1.0f, 0.0f, FLT_MAX);
   ImGui::DragFloat("height", &transform.height, 1.0f, 0.0f, FLT_MAX);
 }
 
-static void inspect_color(World* world, Entity entity) {
+static void inspect_color(World::CWorld* world, Entity entity) {
   auto& color = world->get_component<Color>(entity);
   // Color stores ints from 0-255, ImGui wants floats from 0-1
   float rgba[4] = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f,
@@ -36,7 +37,7 @@ static void inspect_color(World* world, Entity entity) {
   }
 }
 
-static void inspect_camera2d(World* world, Entity entity) {
+static void inspect_camera2d(World::CWorld* world, Entity entity) {
   auto& camera = world->get_component<Camera2D>(entity);
   ImGui::Checkbox("current", &camera.current);
   ImGui::DragFloat("zoom", &camera.zoom, 0.01f, 0.01f, 100.0f);
@@ -49,7 +50,7 @@ static void inspect_camera2d(World* world, Entity entity) {
   }
 }
 
-static void inspect_player_controller(World* world, Entity entity) {
+static void inspect_player_controller(World::CWorld* world, Entity entity) {
   auto& controller = world->get_component<PlayerController>(entity);
   // these are driven by input, so just display them
   ImGui::BeginDisabled();
@@ -68,7 +69,7 @@ static int filename_char_filter(ImGuiInputTextCallbackData* data) {
   return data->EventChar == '/' || data->EventChar == '\\';
 }
 
-static void inspect_luau_script(World* world, Entity entity) {
+static void inspect_luau_script(World::CWorld* world, Entity entity) {
   auto& script = world->get_component<LuauScript>(entity);
   // the script system reloads whenever the path changes, so only commit the
   // new path when enter is pressed instead of on every keystroke
@@ -108,12 +109,12 @@ struct ComponentEntry {
   std::string_view name;
   /// nullptr if there's nothing to show, the component is drawn as a leaf
   ComponentInspector inspect;
-  std::function<bool(World* world, Entity entity)> has;
+  std::function<bool(World::CWorld* world, Entity entity)> has;
   /// Add the component with its default value
-  std::function<void(World* world, Entity entity)> add;
-  std::function<void(World* world, Entity entity)> remove;
+  std::function<void(World::CWorld* world, Entity entity)> add;
+  std::function<void(World::CWorld* world, Entity entity)> remove;
   /// Copy the component from one entity onto another
-  std::function<void(World* world, Entity from, Entity to)> copy;
+  std::function<void(World::CWorld* world, Entity from, Entity to)> copy;
 };
 
 template <ComponentConcept ComponentType>
@@ -123,19 +124,19 @@ static ComponentEntry make_entry(ComponentInspector inspect,
       .name = ComponentType::name,
       .inspect = std::move(inspect),
       .has =
-          [](World* world, Entity entity) {
+          [](World::CWorld* world, Entity entity) {
             return world->has_component<ComponentType>(entity);
           },
       .add =
-          [default_value](World* world, Entity entity) {
+          [default_value](World::CWorld* world, Entity entity) {
             world->add_component<ComponentType>(entity, default_value);
           },
       .remove =
-          [](World* world, Entity entity) {
+          [](World::CWorld* world, Entity entity) {
             world->remove_component<ComponentType>(entity);
           },
       .copy =
-          [](World* world, Entity from, Entity to) {
+          [](World::CWorld* world, Entity from, Entity to) {
             world->add_component<ComponentType>(
                 to, world->get_component<ComponentType>(from));
           },
@@ -169,7 +170,7 @@ static const ComponentEntry* find_component(std::string_view name) {
 using DeferredActions = std::vector<std::function<void()>>;
 
 /// Menu items for every component the entity doesn't have yet
-static void add_component_items(World* world, Entity entity,
+static void add_component_items(World::CWorld* world, Entity entity,
                                 DeferredActions& deferred) {
   bool any = false;
   for (auto& entry : components) {
@@ -184,7 +185,7 @@ static void add_component_items(World* world, Entity entity,
 }
 
 /// Create a new entity with copies of every known component of entity
-static void duplicate_entity(World* world, Entity entity) {
+static void duplicate_entity(World::CWorld* world, Entity entity) {
   Entity copy = world->create_entity();
   for (auto& entry : components) {
     if (entry.has(world, entity))
@@ -204,7 +205,7 @@ static bool passes_filter(const ImGuiTextFilter& filter, const char* label,
   return false;
 }
 
-static void render_component(World* world, Entity entity,
+static void render_component(World::CWorld* world, Entity entity,
                              const std::string& component,
                              DeferredActions& deferred) {
   ImGui::PushID(component.c_str());
@@ -239,7 +240,7 @@ static void render_component(World* world, Entity entity,
   ImGui::PopID();
 }
 
-static void render_entity(World* world, Entity entity,
+static void render_entity(World::CWorld* world, Entity entity,
                           const ImGuiTextFilter& filter,
                           DeferredActions& deferred) {
   auto entity_components = world->get_all_component_names(entity);
@@ -288,7 +289,7 @@ static void render_entity(World* world, Entity entity,
   ImGui::PopID();
 }
 
-void TreeGui::render(Engine::CEngine* engine, World* world) {
+void TreeGui::render(Engine::CEngine* engine, World::CWorld* world) {
   static ImGuiTextFilter filter;
   DeferredActions deferred;
 

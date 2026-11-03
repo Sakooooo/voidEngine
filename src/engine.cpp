@@ -75,8 +75,8 @@ CEngine::CEngine() {
 
   luaL_openlibs(lua);
 
-  spdlog::trace("do World constructor");
-  world = std::make_unique<World>();
+  spdlog::trace("do CWorld constructor");
+  world = std::make_unique<World::CWorld>();
 
   systems = std::make_unique<CSystemManager>(this, world.get());
 

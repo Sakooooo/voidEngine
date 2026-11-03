@@ -2,7 +2,7 @@
 #include "base_components.h"
 #include <SDL3/SDL_render.h>
 
-void CCamera2DSystem::late_tick(Engine::CEngine* engine, World* world,
+void CCamera2DSystem::late_tick(Engine::CEngine* engine, World::CWorld* world,
                                 double deltaTime) {
   int w{0}, h{0};
   if (!SDL_GetCurrentRenderOutputSize(engine->renderer, &w, &h)) {

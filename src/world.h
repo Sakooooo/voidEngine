@@ -84,8 +84,10 @@ private:
   std::unordered_map<Entity, ComponentType> m_storage{};
 };
 
+namespace World {
+
 /// Controls the entire ECS
-class World {
+class CWorld {
 public:
   /// Create a new entity, which is just another ID
   /// Checks for any available free entities in the m_free vector,
@@ -230,6 +232,8 @@ private:
   /// List of all Components and their respective Storages
   std::unordered_map<std::type_index, std::unique_ptr<IStorage>> m_storages;
 };
+
+} // namespace World
 
 // void mySystem(SDL_Renderer* r);
 

@@ -71,7 +71,7 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   return true;
 };
 
-void CLuauScriptSystem::tick(Engine::CEngine* engine, World* world,
+void CLuauScriptSystem::tick(Engine::CEngine* engine, World::CWorld* world,
                              double deltaTime) {
   lua_State* L = engine->lua;
   world->each<LuauScript>([&](Entity entity, LuauScript& script) {

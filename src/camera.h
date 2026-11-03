@@ -15,11 +15,11 @@ struct Camera2D : public Component {
 };
 
 class CCamera2DSystem : public ISystem {
-  void tick(Engine::CEngine* engine, World* world, double deltaTime) override {
-  };
-  void late_tick(Engine::CEngine* engine, World* world,
+  void tick(Engine::CEngine* engine, World::CWorld* world,
+            double deltaTime) override {};
+  void late_tick(Engine::CEngine* engine, World::CWorld* world,
                  double deltaTime) override;
-  void draw(Engine::CEngine* engine, World* world) override {};
+  void draw(Engine::CEngine* engine, World::CWorld* world) override {};
 };
 
 /// Used in draw systems to create a FRect relative to the current view

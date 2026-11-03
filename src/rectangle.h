@@ -12,11 +12,11 @@ struct Rect : public Component {
 
 /// System to draw all entities with a rectangle
 class CRectSystem : public ISystem {
-  void tick(Engine::CEngine* engine, World* world, double deltaTime) override {
-  };
-  void late_tick(Engine::CEngine* engine, World* world,
+  void tick(Engine::CEngine* engine, World::CWorld* world,
+            double deltaTime) override {};
+  void late_tick(Engine::CEngine* engine, World::CWorld* world,
                  double deltaTime) override {};
-  void draw(Engine::CEngine* engine, World* world) override;
+  void draw(Engine::CEngine* engine, World::CWorld* world) override;
 };
 
 #endif

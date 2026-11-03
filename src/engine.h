@@ -10,7 +10,9 @@
 #include <memory>
 
 // forward decls
-class World;
+namespace World {
+class CWorld;
+}
 class CGuiManager;
 
 namespace Engine {
@@ -22,7 +24,7 @@ public:
   SDL_Renderer* renderer{nullptr};
   const bool* keyboard_state{SDL_GetKeyboardState(nullptr)};
 
-  std::unique_ptr<World> world;
+  std::unique_ptr<World::CWorld> world;
   std::unique_ptr<CSystemManager> systems;
   std::unique_ptr<CGuiManager> gui_manager;
 
