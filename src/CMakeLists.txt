@@ -60,8 +60,24 @@ else()
 endif()
 
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-	    ${CMAKE_SOURCE_DIR}/assets/scripts
-	    $<TARGET_FILE_DIR:${PROJECT_NAME}>/scripts
-)
+# Copy every script next to the executable, each file gets its own rule so
+# editing (or adding) a script recopies it on the next build without relinking
+set(SCRIPTS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets/scripts)
+set(SCRIPTS_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/scripts)
+file(GLOB_RECURSE SCRIPT_FILES CONFIGURE_DEPENDS ${SCRIPTS_SOURCE_DIR}/*)
+
+set(SCRIPT_OUTPUTS)
+foreach(SCRIPT_FILE ${SCRIPT_FILES})
+  file(RELATIVE_PATH SCRIPT_RELATIVE ${SCRIPTS_SOURCE_DIR} ${SCRIPT_FILE})
+  set(SCRIPT_OUTPUT ${SCRIPTS_OUTPUT_DIR}/${SCRIPT_RELATIVE})
+  add_custom_command(
+    OUTPUT ${SCRIPT_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SCRIPT_FILE} ${SCRIPT_OUTPUT}
+    DEPENDS ${SCRIPT_FILE}
+    COMMENT "Copying script ${SCRIPT_RELATIVE}"
+  )
+  list(APPEND SCRIPT_OUTPUTS ${SCRIPT_OUTPUT})
+endforeach()
+
+add_custom_target(copy_scripts ALL DEPENDS ${SCRIPT_OUTPUTS})
+add_dependencies(${PROJECT_NAME} copy_scripts)
