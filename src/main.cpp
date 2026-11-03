@@ -31,22 +31,24 @@ int main() {
   engine.world->add_component<Transform2D>(
       entity,
       Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
-                  .width = 100.0f,
-                  .height = 100.0f});
+		  .width = 100.0f,
+		  .height = 100.0f});
   engine.world->add_component<PlayerController>(entity, PlayerController{});
   engine.world->add_component<Color>(entity,
-                                     Color{.r = 255, .g = 0, .b = 0, .a = 255});
+				     Color{.r = 255, .g = 0, .b = 0, .a = 255});
   engine.world->add_component<Rect>(entity, Rect{});
   engine.world->add_component<Camera2D>(
       entity,
       Camera2D{.current = true, .follow = engine.world->make_ref(entity)});
+  engine.world->add_component<LuauScript>(entity,
+					  LuauScript{.path = "test.luau"});
 
   auto entity2 = engine.world->create_entity();
   engine.world->add_component<Transform2D>(
       entity2,
       Transform2D{.pos = Vector2{.x = 100.0f, .y = 0.0f},
-                  .width = 100.0f,
-                  .height = 100.0f});
+		  .width = 100.0f,
+		  .height = 100.0f});
   engine.world->add_component<Color>(
       entity2, Color{.r = 255, .g = 255, .b = 0, .a = 255});
   engine.world->add_component<Rect>(entity2, Rect{});
@@ -60,6 +62,9 @@ int main() {
   // TestSystem mySystem{};
 
   // engine.systems->add(&mySystem);
+
+  CLuauScriptSystem script_system{};
+  engine.systems->add(&script_system);
 
   CPlayerControllerSystem controller_system{};
   engine.systems->add(&controller_system);
@@ -86,12 +91,12 @@ int main() {
     while (SDL_PollEvent(&event)) {
       engine.gui_manager->event(&event);
       if (event.type == SDL_EVENT_QUIT) {
-        running = false;
+	running = false;
       }
 
       if (event.type == SDL_EVENT_KEY_DOWN) {
-        if (event.key.key == SDLK_ESCAPE)
-          running = false;
+	if (event.key.key == SDLK_ESCAPE)
+	  running = false;
       }
     }
 
