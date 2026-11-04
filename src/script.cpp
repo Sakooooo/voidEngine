@@ -46,20 +46,22 @@ bool CLuauScriptSystem::load_script(lua_State* L, Entity entity,
   }
   spdlog::trace("compiled {} to bytecode", full_path);
 
-  lua_newtable(L);                    // environment
-  lua_newtable(L);                    // void table
-  lua_setfield(L, -2, "void");        // set environment to have void table
-				      //
-  lua_newtable(L);                    // self table
-  lua_pushinteger(L, entity);         // push self id
-  lua_setfield(L, -2, "id");          // set self id value
+  lua_newtable(L);             // environment
+  lua_newtable(L);             // void table
+  lua_setfield(L, -2, "void"); // set environment to have void table
+			       //
+  lua_newtable(L);             // self table
+  lua_pushinteger(L, entity);  // push self id
+  lua_setfield(L, -2, "id");   // set self id value
+			       //
   lua_pushcfunction(L, World::lua::has, "has"); // push has function
-  lua_setfield(L, -2, "has");         // has function
-  lua_setfield(L, -2, "entity");      // put entity on env
-  lua_newtable(L);                    // metatable
-  lua_pushvalue(L, LUA_GLOBALSINDEX); // push regular globals
-  lua_setfield(L, -2, "__index");     // set __index
-  lua_setmetatable(L, -2);            // set metatable
+  lua_setfield(L, -2, "has");                   // has function
+  lua_setfield(L, -2, "entity");                // put entity on env
+						//
+  lua_newtable(L);                              // metatable
+  lua_pushvalue(L, LUA_GLOBALSINDEX);           // push regular globals
+  lua_setfield(L, -2, "__index");               // set __index
+  lua_setmetatable(L, -2);                      // set metatable
 
   std::string chunk = "=" + path;
   int status = luau_load(L, chunk.c_str(), bytecode, bytecode_length, -1);
