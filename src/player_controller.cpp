@@ -3,7 +3,7 @@
 void CPlayerControllerSystem::tick(Engine::CEngine* engine,
                                    World::CWorld* world, double deltaTime) {
 
-  const bool* keys = engine->keyboard_state;
+  const bool* keys = engine->keyboard_state.keys;
   world->each<Transform2D, PlayerController>(
       [keys, deltaTime](Entity entity, Transform2D& transform,
                         PlayerController& controller) {

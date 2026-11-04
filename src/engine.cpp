@@ -73,6 +73,15 @@ CEngine::CEngine() {
   lua_pushcfunction(lua, c_function_test, "myTestFunction");
   lua_setglobal(lua, "myFunction");
 
+  static const struct luaL_Reg input_functions[] = {
+      {
+	  "is_pressed",
+	  Engine::lua::input_is_pressed,
+      },
+      {nullptr, nullptr}};
+
+  luaL_register(lua, "input", input_functions);
+
   luaL_openlibs(lua);
 
   spdlog::trace("add engine pointer to luau threaddata");
@@ -103,5 +112,17 @@ CEngine::~CEngine() {
 
 void CEngine::tick(double deltaTime) { systems->tick(deltaTime); }
 void CEngine::draw() { systems->draw(); }
+
+namespace lua {
+int input_is_pressed(lua_State* L) {
+
+  Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
+  const char* key = luaL_checkstring(L, 1); // key
+
+  lua_pushboolean(L, engine->keyboard_state.is_down(key));
+
+  return 1;
+};
+}; // namespace lua
 
 } // namespace Engine
