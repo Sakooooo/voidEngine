@@ -4,4 +4,4 @@
 <small><a href="https://fonts.google.com/specimen/Comfortaa">Comfortaa</a> designed by Johan Aakerlund</small>
 </p>
 
-Game engine project.
+Game engine project made in C++26.
