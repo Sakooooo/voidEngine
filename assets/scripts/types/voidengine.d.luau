@@ -89,3 +89,19 @@ type Key =
 	| "comma"
 	| "period"
 	| "slash"
+
+declare input: {
+    is_pressed: (key: Key) -> boolean,
+}
+
+-- the self table passed to script callbacks, see Script::load_script
+type Entity = {
+    id: number,
+    has: (self: Entity, component: string) -> boolean,
+}
+
+declare entity: Entity
+
+declare void: {
+    tick: ((self: Entity, dt: number) -> ())?,
+}
