@@ -83,17 +83,21 @@ CEngine::CEngine() {
   luaL_register(lua, "input", input_functions);
   lua_pop(lua, 1);
 
-  static const struct luaL_Reg vector2_functions[] = {{"new", Vector2::lua_new},
+  static const struct luaL_Reg vector2_functions[] = {
+    {"new", Vector2::lua_new},
+    {"normalize", Vector2::lua_normalize},
 						      {nullptr, nullptr}};
 
   luaL_register(lua, "Vector2", vector2_functions);
 
-  lua_pop(lua, 1);
 
   luaL_newmetatable(lua, "Vector2");
-  lua_pushcfunction(lua, Vector2::lua_index, "vector2_index");
+  lua_pushvalue(lua, -2);
+  lua_pushcclosure(lua, Vector2::lua_index, "vector2_index", 1);
   lua_setfield(lua, -2, "__index");
-  lua_pop(lua, 1);
+  lua_pushcfunction(lua, Vector2::lua_add, "vector2_add");
+  lua_setfield(lua, -2, "__add");
+  lua_pop(lua, 2);
 
   luaL_openlibs(lua);
 

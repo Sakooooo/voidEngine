@@ -7,15 +7,29 @@ print(vector)
 print("This is my X value" .. tostring(vector.x))
 print("This is my Y value" .. tostring(vector.y))
 
+local vector2 = Vector2.new(50, 50)
+print(vector2)
+print("This is my second X value" .. tostring(vector2.x))
+print("This is my second Y value" .. tostring(vector2.y))
+
+local newvector = vector + vector2
+print(newvector)
+print("This is my added X value" .. tostring(newvector.x))
+print("This is my added Y value" .. tostring(newvector.y))
+
+newvector:normalize()
+print(newvector)
+print("This is my normalized X value" .. tostring(newvector.x))
+print("This is my normalized Y value" .. tostring(newvector.y))
+
 function void.tick(self, dt)
 	-- print(self)
 	-- print(dt)
 	-- print("Tick")
 
 	-- print(self:has("Transform2D"))
-	-- print(self:has("fun"))
+    -- print(self:has("fun"))
 
-	-- print(input.is_pressed("w"))
 	if input.is_pressed("w") then
 		print("W is being held!")
 	end

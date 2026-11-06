@@ -1,4 +1,4 @@
--- keep in sync with KeyboardState::string_key_map in src/engine.h
+ -- keep in sync with KeyboardState::string_key_map in src/engine.h
 type Key =
 	-- letters
 	| "a"
@@ -101,6 +101,33 @@ type Entity = {
 }
 
 declare entity: Entity
+
+type Vector2MetaTable = {
+    __add: (a: Vector2, b: Vector2) -> Vector2,
+}
+
+type Vector2 = typeof(setmetatable({} :: {
+    x: number,
+    y: number,
+	normalize: (self: Vector2) -> Vector2
+    }, {} :: Vector2MetaTable))
+
+declare Vector2: {
+    new: (x: number, y: number) -> Vector2
+}
+
+-- declare class Vector2: {
+--     x: number,
+--     y: number,
+--     normalize: (self: Vector2) -> Vector2,
+--     __add: (self: Vector2, other: Vector2) -> Vector2
+-- }
+
+-- declare Vector2: {
+--     new: (x: number, y: number) -> Vector2,
+--     normalize: (vector: Vector2) -> Vector2,
+-- }
+
 
 declare void: {
     tick: ((self: Entity, dt: number) -> ())?,

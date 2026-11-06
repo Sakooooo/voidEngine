@@ -21,6 +21,13 @@ struct Vector2 {
     y += other.y;
   }
 
+  Vector2 operator+(const Vector2& other) const {
+    return {
+      .x = (x + other.x),
+      .y = (y + other.y),
+    };
+  }
+
   template <NumberConcept T>
   Vector2 operator*(const T num) const {
     return {static_cast<float>(x * num), static_cast<float>(y * num)};
@@ -34,21 +41,53 @@ struct Vector2 {
     y = y / distance;
   };
 
-  /// Index
+  /// Add (__add)
+  static int lua_add(lua_State* L) {
+    auto& a = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+    auto& b = *static_cast<Vector2*>(luaL_checkudata(L, 2, "Vector2"));
+
+    Vector2* vector =
+      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+
+    *vector = a + b;
+
+    luaL_getmetatable(L, "Vector2");
+    lua_setmetatable(L, -2);
+
+    return 1;
+  };
+
+  /// Index (__index)
   static int lua_index(lua_State* L) {
     auto& vector = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
-    std::string key = static_cast<std::string>(lua_tostring(L, 2));
+    std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
 
     if (key == "x") {
       lua_pushnumber(L, vector.x);
     } else if (key == "y") {
       lua_pushnumber(L, vector.y);
     } else {
-      lua_pushnil(L);
+      // lua_pushnil(L);
+      lua_getfield(L, lua_upvalueindex(1), key.c_str());
     }
 
     return 1;
   };
+
+  /// vector:normalize(), returns Vector2 (just calls Normalize)
+  static int lua_normalize(lua_State* L) {
+    auto target = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+    target.normalize();
+
+    Vector2* vector =
+      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+    *vector = target;
+
+    luaL_getmetatable(L, "Vector2");
+    lua_setmetatable(L, -2);
+
+    return 1;
+  }
 
   /// Vector2.new(x, y), returns Vector2 = { x: number, y: number }
   static int lua_new(lua_State* L) {
