@@ -2,6 +2,11 @@ print("Hello I am a script!")
 
 -- local input = require("input")
 
+local vector = Vector2.new(20, 50)
+print(vector)
+print("This is my X value" .. tostring(vector.x))
+print("This is my Y value" .. tostring(vector.y))
+
 function void.tick(self, dt)
 	-- print(self)
 	-- print(dt)

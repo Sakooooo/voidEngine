@@ -3,6 +3,10 @@
 
 #include <cmath>
 #include <concepts>
+#include <lua.h>
+#include <lualib.h>
+#include <spdlog/spdlog.h>
+#include <string>
 #include <type_traits>
 
 template <typename T>
@@ -29,6 +33,41 @@ struct Vector2 {
     x = x / distance;
     y = y / distance;
   };
+
+  /// Index
+  static int lua_index(lua_State* L) {
+    auto& vector = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+    std::string key = static_cast<std::string>(lua_tostring(L, 2));
+
+    if (key == "x") {
+      lua_pushnumber(L, vector.x);
+    } else if (key == "y") {
+      lua_pushnumber(L, vector.y);
+    } else {
+      lua_pushnil(L);
+    }
+
+    return 1;
+  };
+
+  /// Vector2.new(x, y), returns Vector2 = { x: number, y: number }
+  static int lua_new(lua_State* L) {
+    float x = static_cast<float>(luaL_checknumber(L, 1));
+    float y = static_cast<float>(luaL_checknumber(L, 2));
+
+    spdlog::trace("Created new Vector2 with x: {}, y: {}", x, y);
+
+    // TODO: use luau userdata tags on these
+    Vector2* vector =
+	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+
+    *vector = {x, y};
+
+    luaL_getmetatable(L, "Vector2");
+    lua_setmetatable(L, -2);
+
+    return 1;
+  };
 };
 
 /// A global 2D view, used when in 2D and adjusts to the Camera2D
@@ -40,7 +79,7 @@ struct View2D {
   /// Return the position of another object relative to the View2D
   Vector2 to_screen(Vector2 other) const {
     return {(other.x - center.x) * zoom + screen_center.x,
-            (other.y - center.y) * zoom + screen_center.y};
+	    (other.y - center.y) * zoom + screen_center.y};
   }
 };
 
