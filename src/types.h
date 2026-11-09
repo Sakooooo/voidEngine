@@ -33,6 +33,11 @@ struct Vector2 {
     return {static_cast<float>(x * num), static_cast<float>(y * num)};
   }
 
+  Vector2 operator*(const Vector2 other) const {
+    return {static_cast<float>(x * other.x), static_cast<float>(y * other.y)};
+  }
+
+
   void normalize() {
     if (x == 0 && y == 0)
       return;
@@ -40,6 +45,39 @@ struct Vector2 {
     x = x / distance;
     y = y / distance;
   };
+
+  /// Multiply (__mul)
+  static int lua_mul(lua_State* L) {
+    Vector2 result;
+
+    // check each
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+      // number
+      float number = static_cast<float>(lua_tonumber(L, 1));
+      auto& vector = *static_cast<Vector2*>(luaL_checkudata(L, 2, "Vector2"));
+      result = vector * number;
+    } else if (lua_type(L, 2) == LUA_TNUMBER) {
+      // other way around
+      auto& vector = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+      float number = static_cast<float>(lua_tonumber(L, 2));
+      result = vector * number;
+    } else {
+      // vector
+      auto& a = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+      auto& b = *static_cast<Vector2*>(luaL_checkudata(L, 2, "Vector2"));
+      result = a * b;
+    }
+
+    Vector2* vector =
+      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+
+    *vector = result;
+
+    luaL_getmetatable(L, "Vector2");
+    lua_setmetatable(L, -2);
+
+    return 1;
+  }
 
   /// Add (__add)
   static int lua_add(lua_State* L) {

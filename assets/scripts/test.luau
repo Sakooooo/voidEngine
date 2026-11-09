@@ -22,6 +22,12 @@ print(newvector)
 print("This is my normalized X value" .. tostring(newvector.x))
 print("This is my normalized Y value" .. tostring(newvector.y))
 
+newvector = newvector * 2
+print(newvector)
+print("This is my 2x X value" .. tostring(newvector.x))
+print("This is my 2x Y value" .. tostring(newvector.y))
+
+
 function void.tick(self, dt)
 	-- print(self)
 	-- print(dt)
