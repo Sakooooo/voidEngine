@@ -36,21 +36,36 @@ function void.tick(self, dt)
 	-- print(self:has("Transform2D"))
     -- print(self:has("fun"))
     --
-  print("width: " .. self.Transform2D.width)
-  print("height: " .. self.Transform2D.height)
-  print("x: " .. self.Transform2D.pos.x)
-  print("y: " .. self.Transform2D.pos.y)
+  -- print("width: " .. self.Transform2D.width)
+  -- print("height: " .. self.Transform2D.height)
+  -- print("x: " .. self.Transform2D.pos.x)
+  -- print("y: " .. self.Transform2D.pos.y)
 
-	if input.is_pressed("w") then
-		print("W is being held!")
+  local dir = Vector2.new(0, 0)
+
+  if input.is_pressed("w") then
+      dir.y -= 1
 	end
-	if input.is_pressed("s") then
-		print("S is being held!")
+  if input.is_pressed("s") then
+      dir.y += 1
+		-- print("S is being held!")
 	end
-	if input.is_pressed("d") then
-		print("D is being held!")
+  if input.is_pressed("d") then
+      dir.x += 1
+		-- print("D is being held!")
 	end
-	if input.is_pressed("a") then
-		print("A is being held!")
-	end
+  if input.is_pressed("a") then
+      dir.x -= 1
+		-- print("A is being held!")
+  end
+
+  dir = dir:normalize()
+
+  local t = self.Transform2D
+
+  if t then
+      t.pos += dir * 200 * dt
+  end
+
+
 end

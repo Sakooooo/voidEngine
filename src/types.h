@@ -23,8 +23,8 @@ struct Vector2 {
 
   Vector2 operator+(const Vector2& other) const {
     return {
-      .x = (x + other.x),
-      .y = (y + other.y),
+	.x = (x + other.x),
+	.y = (y + other.y),
     };
   }
 
@@ -36,7 +36,6 @@ struct Vector2 {
   Vector2 operator*(const Vector2 other) const {
     return {static_cast<float>(x * other.x), static_cast<float>(y * other.y)};
   }
-
 
   void normalize() {
     if (x == 0 && y == 0)
@@ -69,7 +68,7 @@ struct Vector2 {
     }
 
     Vector2* vector =
-      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
 
     *vector = result;
 
@@ -85,7 +84,7 @@ struct Vector2 {
     auto& b = *static_cast<Vector2*>(luaL_checkudata(L, 2, "Vector2"));
 
     Vector2* vector =
-      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
 
     *vector = a + b;
 
@@ -112,13 +111,28 @@ struct Vector2 {
     return 1;
   };
 
+  static int lua_newindex(lua_State* L) {
+    auto& vector = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+    std::string key = luaL_checkstring(L, 2);
+    float value = static_cast<float>(luaL_checknumber(L, 3));
+
+    if (key == "x") {
+      vector.x = value;
+    } else if (key == "y") {
+      vector.y = value;
+    } else {
+      luaL_error(L, "%s does not exist on Vector2", key.c_str());
+    }
+    return 0;
+  };
+
   /// vector:normalize(), returns Vector2 (just calls Normalize)
   static int lua_normalize(lua_State* L) {
     auto target = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
     target.normalize();
 
     Vector2* vector =
-      static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
     *vector = target;
 
     luaL_getmetatable(L, "Vector2");
@@ -132,7 +146,7 @@ struct Vector2 {
     float x = static_cast<float>(luaL_checknumber(L, 1));
     float y = static_cast<float>(luaL_checknumber(L, 2));
 
-    spdlog::trace("Created new Vector2 with x: {}, y: {}", x, y);
+    // spdlog::trace("Created new Vector2 with x: {}, y: {}", x, y);
 
     // TODO: use luau userdata tags on these
     Vector2* vector =

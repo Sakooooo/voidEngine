@@ -140,9 +140,9 @@ public:
     }
     for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
       if (*it == entity) {
-        spdlog::trace("erase entity");
-        m_entities.erase(it);
-        break;
+	spdlog::trace("erase entity");
+	m_entities.erase(it);
+	break;
       }
     }
     m_entity_alive[entity] = false;
@@ -182,7 +182,7 @@ public:
   bool has_component_by_name(std::string_view name, Entity entity) {
     for (auto& [_, storage] : m_storages) {
       if (storage->name() == name)
-        return storage->has(entity);
+	return storage->has(entity);
     }
     return false;
   }
@@ -201,7 +201,7 @@ public:
 
     for (auto& it : m_storages) {
       if (it.second->has(entity)) {
-        result_components.emplace_back(it.second->name());
+	result_components.emplace_back(it.second->name());
       }
     }
 
@@ -221,7 +221,7 @@ public:
     for (Entity entity : m_entities) {
       bool hasAll = (has_component<Components>(entity) && ...);
       if (hasAll) {
-        func(entity, get_component<Components>(entity)...);
+	func(entity, get_component<Components>(entity)...);
       }
     }
   }
@@ -249,36 +249,7 @@ namespace lua {
 int has(lua_State* L);
 
 // TODO: This leaks memory! :DDDDDDDDD And it's not the C++ kind
-static int transform2d_lua_index(lua_State* L) {
-  Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
-  EntityReference ref =
-      *static_cast<EntityReference*>(luaL_checkudata(L, 1, "Transform2D"));
-  std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
-
-  if (!engine->world->is_valid(ref) ||
-      !engine->world->has_component<Transform2D>(ref.entity)) {
-    spdlog::warn("Generation expired for Transform2D on entity");
-    luaL_error(L, "Component Transform2D for this generation has expired.");
-  };
-
-  Transform2D& transform =
-      engine->world->get_component<Transform2D>(ref.entity);
-
-  if (key == "width") {
-    lua_pushnumber(L, transform.width);
-  } else if (key == "height") {
-    lua_pushnumber(L, transform.height);
-  } else if (key == "pos") {
-    Vector2* pos = static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
-    *pos = transform.pos;
-    luaL_getmetatable(L, "Vector2");
-    lua_setmetatable(L, -2);
-  } else {
-    lua_pushnil(L);
-  };
-  return 1;
-  return 1;
-}
+static int transform2d_lua_index(lua_State* L);
 // void mySystem(SDL_Renderer* r);
 
 // void funnyRainbowSystem(double dt);o
@@ -287,31 +258,12 @@ static int transform2d_lua_index(lua_State* L) {
 // TODO: move these to namespace entity
 
 /// __index for Entity metatables
-static int entity_lua_index(lua_State* L) {
-  Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
-  std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
+static int entity_lua_index(lua_State* L);
 
-  lua_pushstring(L, "id");
-  lua_rawget(L, 1); // no metamethods
-  Entity entity = static_cast<Entity>(lua_tointeger(L, -1));
-  lua_pop(L, 1);
-
-  if (key == "Transform2D" &&
-      engine->world->has_component<Transform2D>(entity)) {
-
-    // because on component removal, freed memory would get accessed again
-    EntityReference* ref = static_cast<EntityReference*>(
-        lua_newuserdata(L, sizeof(EntityReference)));
-    *ref = engine->world->make_ref(entity);
-
-    luaL_getmetatable(L, "Transform2D");
-    lua_setmetatable(L, -2);
-  } else {
-    lua_pushnil(L);
-  }
-
-  return 1;
-}
+// TODO: move this to base_components.h later
+// TODO: when changing pos.x or pos.y, it doesn't reflect need to figure that
+// out later
+static int transform2d_lua_newindex(lua_State* L);
 
 }; // namespace lua
 

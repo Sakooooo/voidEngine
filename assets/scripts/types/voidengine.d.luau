@@ -97,20 +97,28 @@ declare input: {
 -- the self table passed to script callbacks, see Script::load_script
 type Entity = {
     id: number,
-    has: (self: Entity, component: string) -> boolean,
+	has: (self: Entity, component: string) -> boolean,
+     Transform2D: Transform2D?
 }
 
 declare entity: Entity
 
 type Vector2MetaTable = {
     __add: (a: Vector2, b: Vector2) -> Vector2,
+    __mul: (a: Vector2 , b: Vector2 | number) -> Vector2,
 }
 
 type Vector2 = typeof(setmetatable({} :: {
     x: number,
     y: number,
 	normalize: (self: Vector2) -> Vector2
-    }, {} :: Vector2MetaTable))
+}, {} :: Vector2MetaTable))
+
+type Transform2D = {
+     width: number,
+     height: number,
+     pos: Vector2
+ }
 
 declare Vector2: {
     new: (x: number, y: number) -> Vector2
