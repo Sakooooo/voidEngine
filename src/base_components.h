@@ -2,6 +2,9 @@
 /// Put simple shit in here
 #ifndef BASE_COMPONENTS_H
 #define BASE_COMPONENTS_H
+#include "engine.h"
+#include "lua.h"
+#include "lualib.h"
 #include "types.h"
 #include <string_view>
 

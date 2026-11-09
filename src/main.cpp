@@ -33,7 +33,7 @@ int main() {
       Transform2D{.pos = Vector2{.x = 0.0f, .y = 0.0f},
                   .width = 100.0f,
                   .height = 100.0f});
-  engine.world->add_component<PlayerController>(entity, PlayerController{});
+  // engine.world->add_component<PlayerController>(entity, PlayerController{});
   engine.world->add_component<Color>(entity,
                                      Color{.r = 255, .g = 0, .b = 0, .a = 255});
   engine.world->add_component<Rect>(entity, Rect{});

@@ -29,6 +29,11 @@ function void.tick(self, dt)
 
 	-- print(self:has("Transform2D"))
     -- print(self:has("fun"))
+    --
+  print("width: " .. self.Transform2D.width)
+  print("height: " .. self.Transform2D.height)
+  print("x: " .. self.Transform2D.pos.x)
+  print("y: " .. self.Transform2D.pos.y)
 
 	if input.is_pressed("w") then
 		print("W is being held!")

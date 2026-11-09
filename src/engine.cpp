@@ -34,7 +34,7 @@ CEngine::CEngine() {
 
   spdlog::trace("sdl renderer and window");
   if (!SDL_CreateWindowAndRenderer("voidEngine", 800, 600, SDL_WINDOW_RESIZABLE,
-				   &window, &renderer)) {
+                                   &window, &renderer)) {
     SDL_Log("Failed to create Window and Renderer! %s", SDL_GetError());
     return;
   }
@@ -75,22 +75,23 @@ CEngine::CEngine() {
 
   static const struct luaL_Reg input_functions[] = {
       {
-	  "is_pressed",
-	  Engine::lua::input_is_pressed,
+          "is_pressed",
+          Engine::lua::input_is_pressed,
       },
       {nullptr, nullptr}};
 
   luaL_register(lua, "input", input_functions);
   lua_pop(lua, 1);
 
+  // Vector2 functions
   static const struct luaL_Reg vector2_functions[] = {
-    {"new", Vector2::lua_new},
-    {"normalize", Vector2::lua_normalize},
-						      {nullptr, nullptr}};
+      {"new", Vector2::lua_new},
+      {"normalize", Vector2::lua_normalize},
+      {nullptr, nullptr}};
 
   luaL_register(lua, "Vector2", vector2_functions);
 
-
+  // Vector2 metatable
   luaL_newmetatable(lua, "Vector2");
   lua_pushvalue(lua, -2);
   lua_pushcclosure(lua, Vector2::lua_index, "vector2_index", 1);
@@ -98,6 +99,21 @@ CEngine::CEngine() {
   lua_pushcfunction(lua, Vector2::lua_add, "vector2_add");
   lua_setfield(lua, -2, "__add");
   lua_pop(lua, 2);
+
+  // Entity metatable
+  luaL_newmetatable(lua, "Entity");
+  lua_pushvalue(lua, -1);
+  lua_pushcclosure(lua, World::lua::entity_lua_index, "entity_index", 1);
+  lua_setfield(lua, -2, "__index");
+  lua_pop(lua, 1);
+
+  // Transform2D metatable
+  luaL_newmetatable(lua, "Transform2D");
+  lua_pushvalue(lua, -1);
+  lua_pushcclosure(lua, World::lua::transform2d_lua_index, "transform2d_index",
+                   1);
+  lua_setfield(lua, -2, "__index");
+  lua_pop(lua, 1);
 
   luaL_openlibs(lua);
 

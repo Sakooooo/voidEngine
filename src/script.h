@@ -27,7 +27,7 @@ class CLuauScriptSystem : public ISystem {
   void draw(Engine::CEngine* engine, World::CWorld* world) override {};
 
   static bool load_script(lua_State* L, Entity entity, const std::string& path,
-                          int& environment_ref);
+                          int& environment_ref, World::CWorld* world);
 };
 
 #endif
