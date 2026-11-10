@@ -98,6 +98,8 @@ CEngine::CEngine() {
   lua_setfield(lua, -2, "__index");
   lua_pushcfunction(lua, Vector2::lua_add, "vector2_add");
   lua_setfield(lua, -2, "__add");
+  lua_pushcfunction(lua, Vector2::lua_sub, "vector2_sub");
+  lua_setfield(lua, -2, "__sub");
   lua_pushcfunction(lua, Vector2::lua_mul, "vector2_mul");
   lua_setfield(lua, -2, "__mul");
   lua_pushcfunction(lua, Vector2::lua_newindex, "vector2_newindex");

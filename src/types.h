@@ -28,6 +28,13 @@ struct Vector2 {
     };
   }
 
+  Vector2 operator-(const Vector2& other) const {
+    return {
+	.x = (x - other.x),
+	.y = (y - other.y),
+    };
+  }
+
   template <NumberConcept T>
   Vector2 operator*(const T num) const {
     return {static_cast<float>(x * num), static_cast<float>(y * num)};
@@ -87,6 +94,22 @@ struct Vector2 {
 	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
 
     *vector = a + b;
+
+    luaL_getmetatable(L, "Vector2");
+    lua_setmetatable(L, -2);
+
+    return 1;
+  };
+
+  /// Subtract (__sub)
+  static int lua_sub(lua_State* L) {
+    auto& a = *static_cast<Vector2*>(luaL_checkudata(L, 1, "Vector2"));
+    auto& b = *static_cast<Vector2*>(luaL_checkudata(L, 2, "Vector2"));
+
+    Vector2* vector =
+	static_cast<Vector2*>(lua_newuserdata(L, sizeof(Vector2)));
+
+    *vector = a - b;
 
     luaL_getmetatable(L, "Vector2");
     lua_setmetatable(L, -2);
