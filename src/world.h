@@ -249,7 +249,7 @@ namespace lua {
 int has(lua_State* L);
 
 // TODO: This leaks memory! :DDDDDDDDD And it's not the C++ kind
-static int transform2d_lua_index(lua_State* L);
+int transform2d_lua_index(lua_State* L);
 // void mySystem(SDL_Renderer* r);
 
 // void funnyRainbowSystem(double dt);o
@@ -258,12 +258,12 @@ static int transform2d_lua_index(lua_State* L);
 // TODO: move these to namespace entity
 
 /// __index for Entity metatables
-static int entity_lua_index(lua_State* L);
+int entity_lua_index(lua_State* L);
 
 // TODO: move this to base_components.h later
 // TODO: when changing pos.x or pos.y, it doesn't reflect need to figure that
 // out later
-static int transform2d_lua_newindex(lua_State* L);
+int transform2d_lua_newindex(lua_State* L);
 
 }; // namespace lua
 

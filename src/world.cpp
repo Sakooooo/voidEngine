@@ -18,7 +18,7 @@ int World::lua::has(lua_State* L) {
   return 1;
 }
 
-static int World::lua::transform2d_lua_index(lua_State* L) {
+int World::lua::transform2d_lua_index(lua_State* L) {
   Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
   EntityReference ref =
       *static_cast<EntityReference*>(luaL_checkudata(L, 1, "Transform2D"));
@@ -48,7 +48,7 @@ static int World::lua::transform2d_lua_index(lua_State* L) {
   return 1;
 }
 
-static int World::lua::entity_lua_index(lua_State* L) {
+int World::lua::entity_lua_index(lua_State* L) {
   Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
   std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
 
@@ -74,7 +74,7 @@ static int World::lua::entity_lua_index(lua_State* L) {
   return 1;
 }
 
-static int World::lua::transform2d_lua_newindex(lua_State* L) {
+int World::lua::transform2d_lua_newindex(lua_State* L) {
   Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
   EntityReference ref =
       *static_cast<EntityReference*>(luaL_checkudata(L, 1, "Transform2D"));
