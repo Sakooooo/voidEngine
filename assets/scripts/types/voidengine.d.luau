@@ -98,14 +98,17 @@ declare input: {
 type Entity = {
     id: number,
 	has: (self: Entity, component: string) -> boolean,
-     Transform2D: Transform2D?
+    Transform2D: Transform2D?,
+    Color: Color?
 }
 
 declare entity: Entity
 
 type Vector2MetaTable = {
     __add: (a: Vector2, b: Vector2) -> Vector2,
-    __mul: (a: Vector2 , b: Vector2 | number) -> Vector2,
+	__sub: (a: Vector2 , b: Vector2) -> Vector2,
+	__mul: (a: Vector2 , b: Vector2 | number) -> Vector2,
+
 }
 
 type Vector2 = typeof(setmetatable({} :: {
@@ -118,7 +121,14 @@ type Transform2D = {
      width: number,
      height: number,
      pos: Vector2
- }
+}
+
+type Color = {
+ r: number,
+ g: number,
+ b: number,
+ a: number,
+}
 
 declare Vector2: {
     new: (x: number, y: number) -> Vector2
