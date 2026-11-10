@@ -22,6 +22,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
+endif()
+
 if(MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
