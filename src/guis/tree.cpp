@@ -1,7 +1,6 @@
 #include "camera.h"
 #include "guis.h"
 #include "imgui.h"
-#include "player_controller.h"
 #include "rectangle.h"
 #include "script.h"
 #include "world.h"
@@ -28,7 +27,7 @@ static void inspect_color(World::CWorld* world, Entity entity) {
   auto& color = world->get_component<Color>(entity);
   // Color stores ints from 0-255, ImGui wants floats from 0-1
   float rgba[4] = {color.r / 255.0f, color.g / 255.0f, color.b / 255.0f,
-                   color.a / 255.0f};
+		   color.a / 255.0f};
   if (ImGui::ColorEdit4("rgba", rgba)) {
     color.r = static_cast<int>(rgba[0] * 255.0f + 0.5f);
     color.g = static_cast<int>(rgba[1] * 255.0f + 0.5f);
@@ -43,25 +42,11 @@ static void inspect_camera2d(World::CWorld* world, Entity entity) {
   ImGui::DragFloat("zoom", &camera.zoom, 0.01f, 0.01f, 100.0f);
   if (camera.follow) {
     ImGui::Text("follow: %u (gen %u)%s", camera.follow->entity,
-                camera.follow->generation,
-                world->is_valid(*camera.follow) ? "" : " [invalid]");
+		camera.follow->generation,
+		world->is_valid(*camera.follow) ? "" : " [invalid]");
   } else {
     ImGui::TextDisabled("follow: none");
   }
-}
-
-static void inspect_player_controller(World::CWorld* world, Entity entity) {
-  auto& controller = world->get_component<PlayerController>(entity);
-  // these are driven by input, so just display them
-  ImGui::BeginDisabled();
-  ImGui::Checkbox("up", &controller.up);
-  ImGui::SameLine();
-  ImGui::Checkbox("down", &controller.down);
-  ImGui::SameLine();
-  ImGui::Checkbox("left", &controller.left);
-  ImGui::SameLine();
-  ImGui::Checkbox("right", &controller.right);
-  ImGui::EndDisabled();
 }
 
 /// Only allow characters that are valid in a plain filename, no directories
@@ -76,9 +61,9 @@ static void inspect_luau_script(World::CWorld* world, Entity entity) {
   char buffer[256];
   std::snprintf(buffer, sizeof(buffer), "%s", script.path.c_str());
   if (ImGui::InputText("path", buffer, sizeof(buffer),
-                       ImGuiInputTextFlags_EnterReturnsTrue |
-                           ImGuiInputTextFlags_CallbackCharFilter,
-                       filename_char_filter)) {
+		       ImGuiInputTextFlags_EnterReturnsTrue |
+			   ImGuiInputTextFlags_CallbackCharFilter,
+		       filename_char_filter)) {
     script.path = buffer;
   }
   ImGui::SetItemTooltip("Filename inside the scripts folder, enter to apply");
@@ -87,12 +72,12 @@ static void inspect_luau_script(World::CWorld* world, Entity entity) {
   if (ImGui::BeginCombo("scripts", script.path.c_str())) {
     const char* base_path = SDL_GetBasePath();
     std::string scripts_path =
-        std::string(base_path ? base_path : "") + "scripts";
+	std::string(base_path ? base_path : "") + "scripts";
     int count = 0;
     char** files = SDL_GlobDirectory(scripts_path.c_str(), "*.luau", 0, &count);
     for (int i = 0; i < count; ++i) {
       if (ImGui::Selectable(files[i], script.path == files[i]))
-        script.path = files[i];
+	script.path = files[i];
     }
     if (count == 0)
       ImGui::TextDisabled("No .luau files in %s", scripts_path.c_str());
@@ -119,27 +104,27 @@ struct ComponentEntry {
 
 template <ComponentConcept ComponentType>
 static ComponentEntry make_entry(ComponentInspector inspect,
-                                 ComponentType default_value = {}) {
+				 ComponentType default_value = {}) {
   return {
       .name = ComponentType::name,
       .inspect = std::move(inspect),
       .has =
-          [](World::CWorld* world, Entity entity) {
-            return world->has_component<ComponentType>(entity);
-          },
+	  [](World::CWorld* world, Entity entity) {
+	    return world->has_component<ComponentType>(entity);
+	  },
       .add =
-          [default_value](World::CWorld* world, Entity entity) {
-            world->add_component<ComponentType>(entity, default_value);
-          },
+	  [default_value](World::CWorld* world, Entity entity) {
+	    world->add_component<ComponentType>(entity, default_value);
+	  },
       .remove =
-          [](World::CWorld* world, Entity entity) {
-            world->remove_component<ComponentType>(entity);
-          },
+	  [](World::CWorld* world, Entity entity) {
+	    world->remove_component<ComponentType>(entity);
+	  },
       .copy =
-          [](World::CWorld* world, Entity from, Entity to) {
-            world->add_component<ComponentType>(
-                to, world->get_component<ComponentType>(from));
-          },
+	  [](World::CWorld* world, Entity from, Entity to) {
+	    world->add_component<ComponentType>(
+		to, world->get_component<ComponentType>(from));
+	  },
   };
 }
 
@@ -147,12 +132,11 @@ static ComponentEntry make_entry(ComponentInspector inspect,
 /// inspect, add, remove and duplicate them
 static const std::vector<ComponentEntry> components = {
     make_entry<Transform2D>(
-        inspect_transform2d,
-        {.pos = {0.0f, 0.0f}, .width = 100.0f, .height = 100.0f}),
+	inspect_transform2d,
+	{.pos = {0.0f, 0.0f}, .width = 100.0f, .height = 100.0f}),
     make_entry<Color>(inspect_color, {.r = 255, .g = 255, .b = 255, .a = 255}),
     make_entry<Rect>(nullptr),
     make_entry<Camera2D>(inspect_camera2d),
-    make_entry<PlayerController>(inspect_player_controller),
     make_entry<LuauScript>(inspect_luau_script),
 };
 
@@ -171,7 +155,7 @@ using DeferredActions = std::vector<std::function<void()>>;
 
 /// Menu items for every component the entity doesn't have yet
 static void add_component_items(World::CWorld* world, Entity entity,
-                                DeferredActions& deferred) {
+				DeferredActions& deferred) {
   bool any = false;
   for (auto& entry : components) {
     if (entry.has(world, entity))
@@ -195,7 +179,7 @@ static void duplicate_entity(World::CWorld* world, Entity entity) {
 
 /// Check if the entity's label or any of its components match the filter
 static bool passes_filter(const ImGuiTextFilter& filter, const char* label,
-                          const std::vector<std::string>& entity_components) {
+			  const std::vector<std::string>& entity_components) {
   if (!filter.IsActive() || filter.PassFilter(label))
     return true;
   for (auto& component : entity_components) {
@@ -206,16 +190,16 @@ static bool passes_filter(const ImGuiTextFilter& filter, const char* label,
 }
 
 static void render_component(World::CWorld* world, Entity entity,
-                             const std::string& component,
-                             DeferredActions& deferred) {
+			     const std::string& component,
+			     DeferredActions& deferred) {
   ImGui::PushID(component.c_str());
   auto entry = find_component(component);
 
   bool open;
   if (!entry || !entry->inspect) {
     ImGui::TreeNodeEx(component.c_str(),
-                      ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet |
-                          ImGuiTreeNodeFlags_NoTreePushOnOpen);
+		      ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet |
+			  ImGuiTreeNodeFlags_NoTreePushOnOpen);
     open = false;
   } else {
     open = ImGui::TreeNodeEx(component.c_str());
@@ -227,7 +211,7 @@ static void render_component(World::CWorld* world, Entity entity,
       ImGui::TextDisabled("Unknown component, add it to the tree registry");
     } else if (ImGui::MenuItem("Remove Component")) {
       deferred.push_back(
-          [entry, world, entity] { entry->remove(world, entity); });
+	  [entry, world, entity] { entry->remove(world, entity); });
     }
     ImGui::EndPopup();
   }
@@ -241,8 +225,8 @@ static void render_component(World::CWorld* world, Entity entity,
 }
 
 static void render_entity(World::CWorld* world, Entity entity,
-                          const ImGuiTextFilter& filter,
-                          DeferredActions& deferred) {
+			  const ImGuiTextFilter& filter,
+			  DeferredActions& deferred) {
   auto entity_components = world->get_all_component_names(entity);
   char label[32];
   std::snprintf(label, sizeof(label), "Entity %u", entity);

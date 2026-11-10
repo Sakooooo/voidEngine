@@ -2,7 +2,6 @@
 #include "engine.h"
 #include "gui.h"
 #include "guis/guis.h"
-#include "player_controller.h"
 #include "rectangle.h"
 #include "script.h"
 #include "world.h"
@@ -68,9 +67,6 @@ int main() {
 
   CLuauScriptSystem script_system{};
   engine.systems->add(&script_system);
-
-  CPlayerControllerSystem controller_system{};
-  engine.systems->add(&controller_system);
 
   CCamera2DSystem camera_system{};
   engine.systems->add(&camera_system);
