@@ -269,6 +269,12 @@ int entity_lua_index(lua_State* L);
 // out later
 int transform2d_lua_newindex(lua_State* L);
 
+// TODO: move this to base_components.h later
+int color_lua_newindex(lua_State* L);
+
+// TODO: move this to base_components.h later
+int color_lua_index(lua_State* L);
+
 }; // namespace lua
 
 } // namespace World

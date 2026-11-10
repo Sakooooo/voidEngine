@@ -1,4 +1,7 @@
+// TODO: find a way to automate passing through components to luau
+// maybe use something like a template function idk
 #include "world.h"
+#include <algorithm>
 #include <lua.h>
 #include <lualib.h>
 #include <spdlog/spdlog.h>
@@ -48,6 +51,35 @@ int World::lua::transform2d_lua_index(lua_State* L) {
   return 1;
 }
 
+int World::lua::color_lua_index(lua_State* L) {
+  Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
+  EntityReference ref =
+      *static_cast<EntityReference*>(luaL_checkudata(L, 1, "Color"));
+  std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
+
+  if (!engine->world->is_valid(ref) ||
+      !engine->world->has_component<Color>(ref.entity)) {
+    spdlog::warn("Color expired for {}", ref.entity);
+    luaL_error(L, "Component Color for this generation has expired.");
+  };
+
+  Color& color = engine->world->get_component<Color>(ref.entity);
+
+  if (key == "r") {
+    lua_pushinteger(L, color.r);
+  } else if (key == "g") {
+    lua_pushinteger(L, color.g);
+  } else if (key == "b") {
+    lua_pushinteger(L, color.b);
+  } else if (key == "a") {
+    lua_pushinteger(L, color.a);
+  } else {
+    lua_pushnil(L);
+  };
+  return 1;
+}
+
+// TODO: generalize this with World::has_component_by_name
 int World::lua::entity_lua_index(lua_State* L) {
   Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
   std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
@@ -62,16 +94,52 @@ int World::lua::entity_lua_index(lua_State* L) {
 
     // because on component removal, freed memory would get accessed again
     EntityReference* ref = static_cast<EntityReference*>(
-        lua_newuserdata(L, sizeof(EntityReference)));
+	lua_newuserdata(L, sizeof(EntityReference)));
     *ref = engine->world->make_ref(entity);
 
     luaL_getmetatable(L, "Transform2D");
+    lua_setmetatable(L, -2);
+  } else if (key == "Color" && engine->world->has_component<Color>(entity)) {
+    EntityReference* ref = static_cast<EntityReference*>(
+	lua_newuserdata(L, sizeof(EntityReference)));
+    *ref = engine->world->make_ref(entity);
+
+    luaL_getmetatable(L, "Color");
     lua_setmetatable(L, -2);
   } else {
     lua_pushnil(L);
   }
 
   return 1;
+}
+
+int World::lua::color_lua_newindex(lua_State* L) {
+  Engine::CEngine* engine = static_cast<Engine::CEngine*>(lua_getthreaddata(L));
+  EntityReference ref =
+      *static_cast<EntityReference*>(luaL_checkudata(L, 1, "Color"));
+  std::string key = static_cast<std::string>(luaL_checkstring(L, 2));
+
+  if (!engine->world->is_valid(ref) ||
+      !engine->world->has_component<Color>(ref.entity)) {
+    spdlog::warn("Color expired for {}", ref.entity);
+    luaL_error(L, "Component Transform2D for this generation has expired.");
+  };
+
+  Color& color = engine->world->get_component<Color>(ref.entity);
+
+  if (key == "r") {
+    color.r = std::clamp(static_cast<int>(luaL_checkinteger(L, 3)), 0, 255);
+  } else if (key == "g") {
+    color.g = std::clamp(static_cast<int>(luaL_checkinteger(L, 3)), 0, 255);
+  } else if (key == "b") {
+    color.b = std::clamp(static_cast<int>(luaL_checkinteger(L, 3)), 0, 255);
+  } else if (key == "a") {
+    color.a = std::clamp(static_cast<int>(luaL_checkinteger(L, 3)), 0, 255);
+  } else {
+    luaL_error(L, "%s is not a valid field on Color", key.c_str());
+  }
+
+  return 0;
 }
 
 int World::lua::transform2d_lua_newindex(lua_State* L) {

@@ -27,45 +27,65 @@ print(newvector)
 print("This is my 2x X value" .. tostring(newvector.x))
 print("This is my 2x Y value" .. tostring(newvector.y))
 
-
 function void.tick(self, dt)
 	-- print(self)
 	-- print(dt)
 	-- print("Tick")
 
 	-- print(self:has("Transform2D"))
-    -- print(self:has("fun"))
-    --
-  -- print("width: " .. self.Transform2D.width)
-  -- print("height: " .. self.Transform2D.height)
-  -- print("x: " .. self.Transform2D.pos.x)
-  -- print("y: " .. self.Transform2D.pos.y)
+	-- print(self:has("fun"))
+	--
+	-- print("width: " .. self.Transform2D.width)
+	-- print("height: " .. self.Transform2D.height)
+	-- print("x: " .. self.Transform2D.pos.x)
+	-- print("y: " .. self.Transform2D.pos.y)
 
-  local dir = Vector2.new(0, 0)
+	local c = self.Color
 
-  if input.is_pressed("w") then
-      dir.y -= 1
+	local dir = Vector2.new(0, 0)
+
+	if input.is_pressed("w") then
+		if c then
+			if c.r >= 255 then
+				c.r = 0
+			else
+				c.r += 1
+			end
+		end
+		dir.y -= 1
 	end
-  if input.is_pressed("s") then
-      dir.y += 1
+	if input.is_pressed("s") then
+		dir.y += 1
 		-- print("S is being held!")
 	end
-  if input.is_pressed("d") then
-      dir.x += 1
+	if input.is_pressed("d") then
+		if c then
+			if c.b >= 255 then
+				c.b = 0
+			else
+				c.b += 1
+			end
+		end
+		dir.x += 1
 		-- print("D is being held!")
 	end
-  if input.is_pressed("a") then
-      dir.x -= 1
+	if input.is_pressed("a") then
+		if c then
+			if c.g >= 255 then
+				c.g = 0
+			else
+				c.g += 1
+			end
+		end
+		dir.x -= 1
 		-- print("A is being held!")
-  end
+	end
 
-  dir = dir:normalize()
+	dir = dir:normalize()
 
-  local t = self.Transform2D
+	local t = self.Transform2D
 
-  if t then
-      t.pos += dir * 200 * dt
-  end
-
-
+	if t then
+		t.pos += dir * 200 * dt
+	end
 end
