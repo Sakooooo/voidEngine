@@ -25,7 +25,11 @@
 using Entity = std::uint32_t;
 
 /// A "reference" that stores the generation and the ID of the Entity to hold a
-/// "reference" for validation I only say "reference" because this isn't a
+/// "reference" for validation
+/// You should use this when doing handing over pointer access for an Entity's
+/// component (e.g when creating caller functions for scripts)
+///
+/// I only say "reference" because this isn't a
 /// fucking reference it's just a struct that holds the id with an extra value
 /// AGAIN!
 /// This should be used when you need to make sure that an entity is still alive
