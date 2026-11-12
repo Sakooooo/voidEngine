@@ -7,6 +7,9 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
+#include "engine.h"
+#include "world.h"
+
 // forward decls
 namespace Engine {
 class CEngine;

@@ -1,9 +1,7 @@
-set(GUI_SOURCES
-  guis/debug.cpp
-  guis/tree.cpp
-)
+set(GUI_SOURCES guis/debug.cpp guis/tree.cpp guis/main.cpp)
 
-set(SOURCES
+set(
+  SOURCES
   main.cpp
   engine.cpp
   gui.cpp
@@ -17,11 +15,9 @@ set(SOURCES
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
 endif()
 
@@ -36,32 +32,35 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(spdlog CONFIG REQUIRED) # logging library
-if (WIN32)
-  target_link_libraries(${PROJECT_NAME} PRIVATE
-    SDL3::SDL3-static
-    unofficial::luau::Luau.VM
-    unofficial::luau::Luau.Ast
-    unofficial::luau::Luau.Common
-    unofficial::luau::Luau.Config
-    unofficial::luau::Luau.Compiler
-    SDL3_image::SDL3_image-static
-    imgui::imgui
-    spdlog::spdlog
+if(WIN32)
+  target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+      SDL3::SDL3-static
+      unofficial::luau::Luau.VM
+      unofficial::luau::Luau.Ast
+      unofficial::luau::Luau.Common
+      unofficial::luau::Luau.Config
+      unofficial::luau::Luau.Compiler
+      SDL3_image::SDL3_image-static
+      imgui::imgui
+      spdlog::spdlog
   )
 else()
-  target_link_libraries(${PROJECT_NAME} PRIVATE
-    SDL3::SDL3
-    Luau.VM
-    Luau.Ast
-    Luau.Common
-    Luau.Config
-    Luau.Compiler
-    SDL3_image::SDL3_image
-    imgui
-    spdlog::spdlog
+  target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+      SDL3::SDL3
+      Luau.VM
+      Luau.Ast
+      Luau.Common
+      Luau.Config
+      Luau.Compiler
+      SDL3_image::SDL3_image
+      imgui
+      spdlog::spdlog
   )
 endif()
-
 
 # Copy every script next to the executable, each file gets its own rule so
 # editing (or adding) a script recopies it on the next build without relinking
@@ -75,7 +74,8 @@ foreach(SCRIPT_FILE ${SCRIPT_FILES})
   set(SCRIPT_OUTPUT ${SCRIPTS_OUTPUT_DIR}/${SCRIPT_RELATIVE})
   add_custom_command(
     OUTPUT ${SCRIPT_OUTPUT}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SCRIPT_FILE} ${SCRIPT_OUTPUT}
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_if_different ${SCRIPT_FILE} ${SCRIPT_OUTPUT}
     DEPENDS ${SCRIPT_FILE}
     COMMENT "Copying script ${SCRIPT_RELATIVE}"
   )

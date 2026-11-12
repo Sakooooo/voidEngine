@@ -131,6 +131,8 @@ struct KeyboardState {
 
 class CEngine {
 public:
+  bool running{true};
+
   // I wonder if this could be an array later
   SDL_Window* window{nullptr};
   SDL_Renderer* renderer{nullptr};

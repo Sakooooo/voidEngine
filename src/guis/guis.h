@@ -8,6 +8,12 @@
 
 #include <array>
 
+class MainGui : public IGui {
+public:
+  MainGui() : IGui() {};
+  void render(Engine::CEngine* engine, World::CWorld* world) override;
+};
+
 class DebugGui : public IGui {
 public:
   DebugGui() : IGui() {};
