@@ -45,7 +45,7 @@ if(WIN32)
     SDL3_image::SDL3_image-static
     imgui::imgui
     spdlog::spdlog
-    tomlplusplus
+    tomlplusplus::tomlplusplus
   )
 else()
   target_link_libraries(
