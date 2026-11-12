@@ -36,29 +36,31 @@ if(WIN32)
   target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-      SDL3::SDL3-static
-      unofficial::luau::Luau.VM
-      unofficial::luau::Luau.Ast
-      unofficial::luau::Luau.Common
-      unofficial::luau::Luau.Config
-      unofficial::luau::Luau.Compiler
-      SDL3_image::SDL3_image-static
-      imgui::imgui
-      spdlog::spdlog
+    SDL3::SDL3-static
+    unofficial::luau::Luau.VM
+    unofficial::luau::Luau.Ast
+    unofficial::luau::Luau.Common
+    unofficial::luau::Luau.Config
+    unofficial::luau::Luau.Compiler
+    SDL3_image::SDL3_image-static
+    imgui::imgui
+    spdlog::spdlog
+    tomlplusplus
   )
 else()
   target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-      SDL3::SDL3
-      Luau.VM
-      Luau.Ast
-      Luau.Common
-      Luau.Config
-      Luau.Compiler
-      SDL3_image::SDL3_image
-      imgui
-      spdlog::spdlog
+    SDL3::SDL3
+    Luau.VM
+    Luau.Ast
+    Luau.Common
+    Luau.Config
+    Luau.Compiler
+    SDL3_image::SDL3_image
+    imgui
+    spdlog::spdlog
+    tomlplusplus
   )
 endif()
 
@@ -75,7 +77,7 @@ foreach(SCRIPT_FILE ${SCRIPT_FILES})
   add_custom_command(
     OUTPUT ${SCRIPT_OUTPUT}
     COMMAND
-      ${CMAKE_COMMAND} -E copy_if_different ${SCRIPT_FILE} ${SCRIPT_OUTPUT}
+    ${CMAKE_COMMAND} -E copy_if_different ${SCRIPT_FILE} ${SCRIPT_OUTPUT}
     DEPENDS ${SCRIPT_FILE}
     COMMENT "Copying script ${SCRIPT_RELATIVE}"
   )

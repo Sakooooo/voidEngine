@@ -31,6 +31,8 @@ find_package(SDL3 CONFIG REQUIRED)
 
 find_package(SDL3_image CONFIG REQUIRED)
 
+find_package(tomlplusplus REQUIRED)
+
 # TODO: Make this check for vcpkg instead
 if(WIN32)
   find_package(unofficial-luau CONFIG REQUIRED)

@@ -25,8 +25,9 @@
 	luau # This doesn't even have a dev package, shit!
 	python3 # for luau build
 	spdlog # logging
+	tomlplusplus # toml parsing
 	# upstream imgui package is outdated,
-	# TODO bug maintainer to update or do it yourself
+	# TODO: bug maintainer to update or do it yourself
 	# (imgui.override {
 	#   IMGUI_BUILD_SDL3_BINDING = true;
 	#   IMGUI_BUILD_SDL3_RENDERER_BINDING = true;
