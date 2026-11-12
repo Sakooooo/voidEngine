@@ -1,3 +1,0 @@
-lua scripting
-remake src/guis/tree.cpp because it's vibecoded slop for debugging and actually testing things right now later
-actual editor gui
